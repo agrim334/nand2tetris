@@ -1,0 +1,32 @@
+(LOOP0)
+	@SCREEN
+	D=A
+	@ind
+	M=D
+	@KBD
+	D=M
+	@WHITE
+	D;JEQ
+	D=-1
+	(WHITE)
+	@COLOR
+	M=D
+	(LOOP1)
+		@ind
+		D=M
+		@KBD
+		D=D-A
+		@LOOP0
+		D;JGE
+		@COLOR
+		D=M
+		@ind
+		A=M
+		M=D
+		D=A+1
+		@ind
+		M=D
+	@LOOP1
+	0;JMP
+@LOOP0
+0;JMP
