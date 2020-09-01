@@ -1,3 +1,4 @@
+#include"parser.h"
 char instruct[17];
 char destb[4];
 char jumpb[4];
@@ -13,10 +14,6 @@ int constant(char ar[],int* ptr){
 
 	return value;
 }
-void ST(char ar[]){
-	;
-}
-
 char* comp(char ar[],int* ptr){
 	switch(ar[*ptr]){
 		case '0':
@@ -387,18 +384,56 @@ char* jump(char ar[],int* ptr){
 	}
 	return jumpb;
 }
+string symbol(char ar[],int* ptr){
+	int i = *ptr;
+	string s = "";
+	while(ar[i]!=')'){
+		s=s+ar[i];
+		i++;
+	}
+	return s;
+}
+
+void Linstruct(char ar[],int* ptr){
+	*ptr=*ptr+1;
+	string s = symbol(ar,ptr);
+	addEntry(s,romaddr);
+}
+
 
 void Ainstruct(char ar[],int* ptr){
 	int i;
 	instruct[0]='0';
 	instruct[16]='\0';
 	*ptr = *ptr+1;
-	int value = constant(ar,ptr);
-	for(i=15;i>0;i--){
-		instruct[i]= (value & 1) + '0';
-		value = value >> 1;
+	if(ar[*ptr]>='0'&& ar[*ptr]<='9') {
+		int value = constant(ar,ptr);
+		for(i=15;i>0;i--){
+			instruct[i]= (value & 1) + '0';
+			value = value >> 1;
+		}
+		string s = string(instruct);
+		addEntry(s,romaddr);
+		romaddr++;
+	}
+	else{
+		string s = symbol(ar,ptr);
+		if(contains(s)){
+			int addr = GetAddress(s);
+			for(i=15;i>0;i--){
+				instruct[i]= (addr & 1) + '0';
+				addr = addr >> 1;
+			}
+			addEntry(s,romaddr);
+			romaddr++;
+		}
+		else{
+			addEntry(s,ramaddr);
+			ramaddr++;			
+		}
 	}
 }
+
 void Cinstruct(char ar[],int* ptr){
 	compb[7]='\0';
 	jumpb[3]='\0';
@@ -406,15 +441,13 @@ void Cinstruct(char ar[],int* ptr){
 
 	int i=*ptr;
 	int f1,f2;
-	int tlen = 0;
-	int j;
-	while(ar[tlen]!='\n')
-		tlen++;
 
 	while(ar[i]!= '=' && ar[i]!='\n')
 		i++;
+
 	if(ar[i] == '=')
 		f1 = 1;
+
 	else
 		f1 = 0;
 	i=*ptr;
@@ -465,29 +498,18 @@ void Cinstruct(char ar[],int* ptr){
 		destb[0]=destb[1]=destb[2]='0';
 	}
 	instruct[0]=instruct[1]=instruct[2]='1';
-	printf("%s %ld\n",compb,strlen(compb));
-	for(i=3;i<10;i++){
+	instruct[16]='\0';
+	for(i=3;i<10;i++)
 		instruct[i]=compb[i-3];
-		compb[i-10]='\0';
-	}
-	for(;i<13;i++){
+
+	for(;i<13;i++)
 		instruct[i]=destb[i-10];
-		destb[i-10]='\0';
-	}
-	for(;i<16;i++){
+
+	for(;i<16;i++)
 		instruct[i]=jumpb[i-13];
-		jumpb[i-10]='\0';
-	}
 
-}
+	string s = string(instruct);
+	addEntry(s,romaddr);
+	romaddr++;
 
-void whitespace(char ar[],int* ptr){
-	while(ar[*ptr]==' '||ar[*ptr]=='\t'||ar[*ptr]=='\n'){
-		*ptr = *ptr+1;
-	}
-}
-
-void comments(char ar[],int* ptr){
-	while(ar[*ptr]!='\n')
-		*ptr = *ptr+1;
 }
