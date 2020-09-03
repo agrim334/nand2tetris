@@ -387,7 +387,7 @@ char* jump(char ar[],int* ptr){
 string symbol(char ar[],int* ptr){
 	int i = *ptr;
 	string s = "";
-	while(ar[i]!=')'){
+	while(ar[i]!=')'&&ar[i]!='\n'){
 		s=s+ar[i];
 		i++;
 	}
@@ -397,7 +397,8 @@ string symbol(char ar[],int* ptr){
 void Linstruct(char ar[],int* ptr){
 	*ptr=*ptr+1;
 	string s = symbol(ar,ptr);
-	addEntry(s,romaddr);
+	if(!contains(s))
+		addEntry(s,romaddr);
 }
 
 
@@ -412,24 +413,17 @@ void Ainstruct(char ar[],int* ptr){
 			instruct[i]= (value & 1) + '0';
 			value = value >> 1;
 		}
-		string s = string(instruct);
-		addEntry(s,romaddr);
-		romaddr++;
 	}
 	else{
 		string s = symbol(ar,ptr);
-		if(contains(s)){
-			int addr = GetAddress(s);
-			for(i=15;i>0;i--){
-				instruct[i]= (addr & 1) + '0';
-				addr = addr >> 1;
-			}
-			addEntry(s,romaddr);
-			romaddr++;
-		}
-		else{
+		if(!contains(s)){
 			addEntry(s,ramaddr);
 			ramaddr++;			
+		}
+		int addr = GetAddress(s);
+		for(i=15;i>0;i--){
+			instruct[i]= (addr & 1) + '0';
+			addr = addr >> 1;
 		}
 	}
 }
@@ -507,9 +501,4 @@ void Cinstruct(char ar[],int* ptr){
 
 	for(;i<16;i++)
 		instruct[i]=jumpb[i-13];
-
-	string s = string(instruct);
-	addEntry(s,romaddr);
-	romaddr++;
-
 }

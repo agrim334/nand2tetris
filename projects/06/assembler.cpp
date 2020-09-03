@@ -1,4 +1,4 @@
-#include"lexer.h"
+#include"parser.h"
 
 char curcom[100];
 
@@ -49,61 +49,63 @@ int main(int argc, char* argv[]){
 	FILE* hackf= fopen(ar,"w+");
 	int ptr=0;
 	int x = 0;
-	while(hasMoreCommands(asmf)){
+	while(1){
 		ptr=0;
 		advance(&asmf);
+		if(!hasMoreCommands(asmf))
+			break;
 		whitespace(curcom,&ptr);
 		x = 0;
 		while(curcom[x]!='\n')
 			x++;
-		printf("%s",curcom);
 		if(ptr < x) {
 			if(curcom[ptr]=='/' && ptr+1 < x && curcom[ptr+1]=='/')
 				;
-
 			else if(ptr < x && curcom[ptr] != '\0' && curcom[ptr] != '\n' && curcom[ptr] != ' ' && curcom[ptr] != '\t'){
 				string ctype = commandType(curcom,&ptr);
-				if (ctype == "A_COMMAND")
-					Ainstruct(curcom,&ptr);
 				if(ctype == "L_COMMAND")
 					Linstruct(curcom,&ptr);
-				else if(ctype == "C_COMMAND")
-					Cinstruct(curcom,&ptr);
-
-				printf("%s\n",instruct);
-				for(int i=0;i<16;i++)
-					instruct[i]='0';
-				instruct[16]='\0';
-
+				else
+					romaddr++;
 			}
 		}
 	}
-
-	while(hasMoreCommands(asmf)){
+	fseek(asmf,0,SEEK_SET);
+	while(1){
 		ptr=0;
 		advance(&asmf);
+		if(!hasMoreCommands(asmf))
+			break;
 		whitespace(curcom,&ptr);
 		x = 0;
 		while(curcom[x]!='\n')
 			x++;
-		printf("%s",curcom);
 		if(ptr < x) {
 			if(curcom[ptr]=='/' && ptr+1 < x && curcom[ptr+1]=='/')
 				comments(curcom,&ptr);
 
 			else if(ptr < x && curcom[ptr] != '\0' && curcom[ptr] != '\n' && curcom[ptr] != ' ' && curcom[ptr] != '\t'){
 				string ctype = commandType(curcom,&ptr);
-				if (ctype == "A_COMMAND")
+				if (ctype == "A_COMMAND"){
 					Ainstruct(curcom,&ptr);
+					fprintf(hackf,"%s\n",instruct);
+					printf("%s\n",instruct);
+					for(int i=0;i<16;i++)
+						instruct[i]='0';
+					instruct[16]='\0';
+				}
+
+				else if(ctype == "C_COMMAND"){
+					Cinstruct(curcom,&ptr);
+					fprintf(hackf,"%s\n",instruct);
+					printf("%s\n",instruct);
+					for(int i=0;i<16;i++)
+						instruct[i]='0';
+					instruct[16]='\0';
+				}
+
 				else if(ctype == "L_COMMAND")
 					Linstruct(curcom,&ptr);
-				else if(ctype == "C_COMMAND")
-					Cinstruct(curcom,&ptr);
-
-				printf("%s\n",instruct);
-				for(int i=0;i<16;i++)
-					instruct[i]='0';
-				instruct[16]='\0';
 
 			}
 		}
