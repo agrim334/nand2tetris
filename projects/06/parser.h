@@ -1,4 +1,6 @@
-#include<bits/stdc++.h>
+#include<iostream>
+#include<string.h>
+#include<unordered_map>
 using namespace std;
 
 unordered_map<string, int> sym_tab;
@@ -47,18 +49,17 @@ bool contains(string symb){
 	for(auto i = sym_tab.begin(); i!= sym_tab.end();i++){
 		string x = i->first;
 		if(symb.compare(x) == 0){
-			cout << x << "sx" << symb << "\n";
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 int GetAddress(string symb){
 	return sym_tab[symb];
 }
 
 void whitespace(char ar[],int* ptr){
-	while(ar[*ptr]==' '||ar[*ptr]=='\t'||ar[*ptr]=='\n'){
+	while(ar[*ptr]==' '||ar[*ptr]=='\t'||ar[*ptr]=='\n'||ar[*ptr]=='\r'||ar[*ptr]=='\v'){
 		*ptr = *ptr+1;
 	}
 }
@@ -480,10 +481,12 @@ void Ainstruct(char ar[],int* ptr){
 	}
 	else{
 		string s = symbol(ar,ptr);
-		s.resize(s.size() - 1);
+		if(s.at(s.size() - 1) == '\r' || s.at(s.size() - 1) == '\n' || s.at(s.size() - 1) == ' ' || s.at(s.size() - 1) == '\t' || s.at(s.size() - 1) == '\0' || s.at(s.size() - 1) == '\v' || s.at(s.size() - 1) == ')')
+			s.resize(s.size() - 1);
+		
 		if(!contains(s)){
 			addEntry(s,ramaddr);
-			ramaddr++;			
+			ramaddr++;
 		}
 		int addr = GetAddress(s);
 		for(i=15;i>0;i--){

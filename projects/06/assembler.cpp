@@ -1,12 +1,14 @@
 #include"parser.h"
 
-char curcom[100];
+char curcom[255];
+FILE* asmf;
+FILE* hackf;
 
-int hasMoreCommands(FILE* fp){
-	return !feof(fp)?true:false;
+bool hasMoreCommands(){
+	return !feof(asmf)?true:false;
 }
-void advance(FILE** fp){
-	fgets(curcom,100,*fp);
+void advance(){
+	fgets(curcom,255,asmf);
 }
 string commandType(char ar[],int* ptr){
 	if(ar[*ptr] == '@')
@@ -32,8 +34,8 @@ int main(int argc, char* argv[]){
 	argv++;
 	argc--;
 	int i = 0;
-
-	FILE* asmf= fopen(argv[0],"r");
+	ST();
+	asmf= fopen(argv[0],"r");
 	int l = strlen(argv[0]);
 	char ar[l+2];
 	while(argv[0][i]!='.'){
@@ -46,13 +48,13 @@ int main(int argc, char* argv[]){
 	ar[i+3]='c';
 	ar[i+4]='k';
 	ar[i+5]='\0';
-	FILE* hackf= fopen(ar,"w+");
+	hackf= fopen(ar,"w+");
 	int ptr=0;
 	int x = 0;
 	while(1){
 		ptr=0;
-		advance(&asmf);
-		if(!hasMoreCommands(asmf))
+		advance();
+		if(!hasMoreCommands())
 			break;
 		whitespace(curcom,&ptr);
 		x = 0;
@@ -65,7 +67,7 @@ int main(int argc, char* argv[]){
 				string ctype = commandType(curcom,&ptr);
 				if(ctype == "L_COMMAND")
 					Linstruct(curcom,&ptr);
-				else
+				else if(ctype == "A_COMMAND" || ctype == "C_COMMAND")
 					romaddr++;
 			}
 		}
@@ -73,8 +75,8 @@ int main(int argc, char* argv[]){
 	fseek(asmf,0,SEEK_SET);
 	while(1){
 		ptr=0;
-		advance(&asmf);
-		if(!hasMoreCommands(asmf))
+		advance();
+		if(!hasMoreCommands())
 			break;
 		whitespace(curcom,&ptr);
 		x = 0;
