@@ -33,7 +33,6 @@ int main(int argc, char* argv[]){
 				comments(curcom,&ptr);
 
 			else if(ptr < x && curcom[ptr] != '\0' && curcom[ptr] != '\n' && curcom[ptr] != ' ' && curcom[ptr] != '\t'){
-	//			printf("%s\n",curcom);
 				arg1(curcom,&ptr);
 			}
 		}

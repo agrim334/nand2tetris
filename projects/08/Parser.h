@@ -20,6 +20,22 @@ string commandType(char ar[],int* ptr){
 
 	else if(s == "goto")
 		return "C_GOTO";
+
+	else if(s == "label")
+		return "C_LABEL";
+
+	else if(s == "if-goto")
+		return "C_IF";
+
+	else if(s == "function")
+		return "C_FUNCTION";
+
+	else if(s == "call")
+		return "C_CALL";
+
+	else if(s == "return")
+		return "C_RETURN";
+
 	return "bad";
 }
 
@@ -47,12 +63,19 @@ void arg1(char ar[],int* ptr){
 	string segcom = "";
 	int i = *ptr;
 
-	if(comtype == "C_ARITHMETIC"){
+	if(comtype == "C_ARITHMETIC" || comtype == "C_GOTO" || comtype == "C_LABEL" || comtype == "C_IF"){
 		while(ar[i]!='\n'&&ar[i]!='\0'&&ar[i]!=' '&&ar[i]!='\t'&&ar[i]!='\r'){
 			segcom.push_back(ar[i]);
 			i++;
 		}
-		arithPrint(segcom);
+		if(comtype == "C_ARITHMETIC")
+			arithPrint(segcom);
+		else if(comtype == "C_LABEL")
+			printLabel(segcom,funcgl,0);
+		else if(comtype == "C_GOTO")
+			printGoto(segcom);
+		else if(comtype == "C_IF")
+			printIf(segcom);
 	}
 	else if(comtype == "C_PUSH" || comtype == "C_POP" || comtype == "C_FUNCTION" || comtype == "C_CALL"){
 		while(ar[i]!='\n'&&ar[i]!='\0'&&ar[i]!=' '&&ar[i]!='\t'&&ar[i]!='\r'){
@@ -66,7 +89,12 @@ void arg1(char ar[],int* ptr){
 		i++;
 		*ptr = i;
 		idx = arg2(ar,ptr);
-		pushpopPrint(comtype,segcom,idx);
+		if(comtype == "C_POP" || comtype == "C_PUSH")
+			pushpopPrint(comtype,segcom,idx);
+		else if(comtype == "C_FUNCTION")
+			printFunction(segcom,idx);
+		else if(comtype == "C_CALL")
+			printCall(segcom,idx);
 	}
 }
 
