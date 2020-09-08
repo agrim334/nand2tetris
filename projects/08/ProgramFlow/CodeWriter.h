@@ -10,7 +10,7 @@ FILE* vmf;
 FILE* asmf;
 string fname;
 int k = 0;
-string funcgl="Sys.init";
+string funcgl="";
 DIR* dir;
 struct dirent *ent;
 int flag = 1;
@@ -114,20 +114,20 @@ void printLabel(string label,string funname,int ra){
 
 void printGoto(string label,string funname,int ra){
 	string cmd;
-	if(!ra)
-		cmd = "@"+funname+"$"+label+"\nD;JMP\n";
-	else
+	if(ra)
 		cmd = "@"+label+"\nD;JMP\n";
+	else
+		cmd = "@"+funname+"$"+label+"\nD;JMP\n";
 
 	fprintf(asmf,"%s\n",cmd.c_str());
 }
 
 void printIf(string label,string funname,int ra){
 	string cmd;
-	if(!ra)
-		cmd = "@R0\nAM=M-1\nD=M\n@"+funname+"$"+label+"\nD;JNE\n";
-	else
+	if(ra)
 		cmd = "@R0\nAM=M-1\nD=M\n@"+label+"\nD;JNE\n";
+	else
+		cmd = "@R0\nAM=M-1\nD=M\n@"+funname+"$"+label+"\nD;JNE\n";
 
 	fprintf(asmf,"%s\n",cmd.c_str());	
 }
@@ -142,22 +142,24 @@ void printCall(string func,int args){
 	pushpopPrint("C_PUSH","that",0);
 	cmd = "@R0\nD=A\n@"+n+"\nD=D-A\n@5\nD=D-A\n@R2\nM=D\n@R0\nD=A\n@R1\nM=D";
 	printGoto(func,func,1);
-	printLabel("RET"+func,func,0);
 	funcgl = func;
+	printLabel("RET"+func,func,1);
 }
 
 void printinit(){
 	string cmd = "@256\nD=A\n@R0\nM=D\n";
+	funcgl="Sys.init";
 	fprintf(asmf,"%s\n",cmd.c_str());	
 	printCall("Sys.init",0);
 }
 
 
 void printReturn(){
-	string cmd = "@FRAME\nM=R1\nA=M\nD=A-5\n@RET\nM=D\n";
+	string cmd = "@R1\nD=A\n@FRAME\nM=D\nA=M\nD=M\n@5\nD=D-A\n@RET"+funcgl+"\nM=D\n";
 	fprintf(asmf,"%s\n",cmd.c_str());
-	pushpopPrint("C_POP","argument",0);
-	cmd = "@R2\nD=A+1\n@R0\nM=D\n@FRAME\nA=M\nD=M\n@R3\nDM=D-1\n@R4\nMD=D-1\n@R2\nMD=D-1@R1\nMD=D-1\n@RET\nD;JMP\n";
+	cmd = "@R0\nAM=M-1\nD=M\n@R2\nA=M\nM=D\n";
+	fprintf(asmf,"%s\n",cmd.c_str());
+	cmd = "@R2\nD=A+1\n@R0\nM=D\n@FRAME\nA=M\nD=A-1\n@R13\nAM=D\nD=M\n@R3\nM=D\n@R13\nAM=M-1\nD=M\n@R4\nM=D\n@R13\nAM=M-1\nD=M\n@R2\nM=D\n@R13\nAM=M-1\nD=M\n@R1\nM=D\n@RET"+funcgl+"\nD;JMP\n";
 	fprintf(asmf,"%s\n",cmd.c_str());
 }
 
@@ -165,7 +167,7 @@ void printFunction(string func,int locals){
 	string cmd = "("+func+")\n";
 	fprintf(asmf,"%s\n",cmd.c_str());
 	int i;
-	for(i=0;i<locals-1;i++){
+	for(i=0;i<locals;i++){
 		pushpopPrint("C_PUSH","constant",0);
 	}
 }

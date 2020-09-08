@@ -63,19 +63,29 @@ void arg1(char ar[],int* ptr){
 	string segcom = "";
 	int i = *ptr;
 
-	if(comtype == "C_ARITHMETIC" || comtype == "C_GOTO" || comtype == "C_LABEL" || comtype == "C_IF"){
+	if(comtype == "C_ARITHMETIC"){
 		while(ar[i]!='\n'&&ar[i]!='\0'&&ar[i]!=' '&&ar[i]!='\t'&&ar[i]!='\r'){
 			segcom.push_back(ar[i]);
 			i++;
 		}
 		if(comtype == "C_ARITHMETIC")
 			arithPrint(segcom);
-		else if(comtype == "C_LABEL")
+	}
+	else if(comtype == "C_GOTO" || comtype == "C_LABEL" || comtype == "C_IF"){
+		while(ar[i]!='\n'&&ar[i]!='\0'&&ar[i]!=' '&&ar[i]!='\t'&&ar[i]!='\r'){
+			i++;
+		}
+		i++;
+		while(ar[i]!='\n'&&ar[i]!='\0'&&ar[i]!=' '&&ar[i]!='\t'&&ar[i]!='\r'){
+			segcom.push_back(ar[i]);
+			i++;
+		}		
+		if(comtype == "C_LABEL")
 			printLabel(segcom,funcgl,0);
 		else if(comtype == "C_GOTO")
-			printGoto(segcom);
+			printGoto(segcom,funcgl,0);
 		else if(comtype == "C_IF")
-			printIf(segcom);
+			printIf(segcom,funcgl,0);
 	}
 	else if(comtype == "C_PUSH" || comtype == "C_POP" || comtype == "C_FUNCTION" || comtype == "C_CALL"){
 		while(ar[i]!='\n'&&ar[i]!='\0'&&ar[i]!=' '&&ar[i]!='\t'&&ar[i]!='\r'){
