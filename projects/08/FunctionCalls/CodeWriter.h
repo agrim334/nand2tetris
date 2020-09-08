@@ -13,7 +13,8 @@ int k = 0;
 string funcgl="";
 DIR* dir;
 struct dirent *ent;
-
+int rcall = 0;
+string r = to_string(rcall);
 void pushpopPrint(string typecom, string seg,int idx){
 	string segR;
 	string ind; 
@@ -131,7 +132,8 @@ void printIf(string label,string funname,int ra){
 }
 
 void printCall(string func,int args){
-	string cmd = "@RET"+func+"\nD=A\n@R0\nA=M\nM=D\n@R0\nM=M+1\n";
+	r = to_string(rcall);
+	string cmd = "@RET"+func+r+"\nD=A\n@R0\nA=M\nM=D\n@R0\nM=M+1\n";
 	string n = to_string(args);
 	fprintf(asmf,"%s\n",cmd.c_str());
 
@@ -152,7 +154,7 @@ void printCall(string func,int args){
 
 	printGoto(func,func,1);
 	funcgl = func;
-	printLabel("RET"+func,func,1);
+	printLabel("RET"+func+r,func,1);
 }
 
 void printinit(){
@@ -164,12 +166,14 @@ void printinit(){
 
 
 void printReturn(){
-	string cmd = "@R1\nD=M\n@FRAME\nM=D\n@5\nA=D-A\nD=M\n@RET"+funcgl+"\nM=D\n";
+	r = to_string(rcall);
+	string cmd = "@R1\nD=M\n@FRAME\nM=D\n@5\nA=D-A\nD=M\n@RET"+funcgl+r+"\nM=D\n";
 	fprintf(asmf,"%s\n",cmd.c_str());
 	cmd = "@R0\nAM=M-1\nD=M\n@R2\nA=M\nM=D\n";
 	fprintf(asmf,"%s\n",cmd.c_str());
-	cmd = "@R2\nD=M+1\n@R0\nM=D\n@FRAME\nA=M\nD=A-1\n@R13\nAM=D\nD=M\n@R4\nM=D\n@R13\nAM=M-1\nD=M\n@R3\nM=D\n@R13\nAM=M-1\nD=M\n@R2\nM=D\n@R13\nAM=M-1\nD=M\n@R1\nM=D\n@RET"+funcgl+"\nA=M\nD;JMP\n";
+	cmd = "@R2\nD=M+1\n@R0\nM=D\n@FRAME\nA=M\nD=A-1\n@R13\nAM=D\nD=M\n@R4\nM=D\n@R13\nAM=M-1\nD=M\n@R3\nM=D\n@R13\nAM=M-1\nD=M\n@R2\nM=D\n@R13\nAM=M-1\nD=M\n@R1\nM=D\n@RET"+funcgl+r+"\nA=M\nD;JMP\n";
 	fprintf(asmf,"%s\n",cmd.c_str());
+	rcall++;
 }
 
 void printFunction(string func,int locals){

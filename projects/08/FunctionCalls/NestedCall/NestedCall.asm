@@ -24,7 +24,7 @@ AM=M-1
 D=M
 @R4
 M=D
-@RETSys.main
+@RETSys.main0
 D=A
 @R0
 A=M
@@ -80,7 +80,7 @@ M=D
 @Sys.main
 D;JMP
 
-(RETSys.main)
+(RETSys.main0)
 
 @R0
 AM=M-1
@@ -223,7 +223,7 @@ A=M
 M=D
 @R0
 M=M+1
-@RETSys.add12
+@RETSys.add120
 D=A
 @R0
 A=M
@@ -279,7 +279,7 @@ M=D
 @Sys.add12
 D;JMP
 
-(RETSys.add12)
+(RETSys.add120)
 
 @R0
 AM=M-1
@@ -388,7 +388,7 @@ M=D
 @5
 A=D-A
 D=M
-@RETSys.add12
+@RETSys.add120
 M=D
 
 @R0
@@ -425,7 +425,7 @@ AM=M-1
 D=M
 @R1
 M=D
-@RETSys.add12
+@RETSys.add120
 A=M
 D;JMP
 
@@ -490,7 +490,7 @@ M=D
 @5
 A=D-A
 D=M
-@RETSys.add12
+@RETSys.add121
 M=D
 
 @R0
@@ -527,7 +527,7 @@ AM=M-1
 D=M
 @R1
 M=D
-@RETSys.add12
+@RETSys.add121
 A=M
 D;JMP
 

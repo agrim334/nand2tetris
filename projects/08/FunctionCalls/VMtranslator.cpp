@@ -72,7 +72,7 @@ int main(int argc, char* argv[]){
 		}
 		int j;
 		i--;
-	//	printinit();
+		printinit();
 		readcom(strcat(a2,vmfil[i].c_str()));
 		for(j=0;j<fno;j++){
 			strcpy(a2,argv[0]);

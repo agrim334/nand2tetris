@@ -1,3 +1,66 @@
+@256
+D=A
+@R0
+M=D
+
+@RETSys.init0
+D=A
+@R0
+A=M
+M=D
+@R0
+M=M+1
+
+@R1
+D=M
+@R0
+A=M
+M=D
+@R0
+M=M+1
+
+@R2
+D=M
+@R0
+A=M
+M=D
+@R0
+M=M+1
+
+@R3
+D=M
+@R0
+A=M
+M=D
+@R0
+M=M+1
+
+@R4
+D=M
+@R0
+A=M
+M=D
+@R0
+M=M+1
+
+@R0
+D=M
+@0
+D=D-A
+@5
+D=D-A
+@R2
+M=D
+@R0
+D=M
+@R1
+M=D
+
+@Sys.init
+D;JMP
+
+(RETSys.init0)
+
 (Sys.init)
 
 @4
@@ -7,7 +70,7 @@ A=M
 M=D
 @R0
 M=M+1
-@RETMain.fibonacci
+@RETMain.fibonacci0
 D=A
 @R0
 A=M
@@ -63,7 +126,7 @@ M=D
 @Main.fibonacci
 D;JMP
 
-(RETMain.fibonacci)
+(RETMain.fibonacci0)
 
 (Main.fibonacci$WHILE)
 
@@ -141,7 +204,7 @@ M=D
 @5
 A=D-A
 D=M
-@RETMain.fibonacci
+@RETMain.fibonacci0
 M=D
 
 @R0
@@ -178,7 +241,7 @@ AM=M-1
 D=M
 @R1
 M=D
-@RETMain.fibonacci
+@RETMain.fibonacci0
 A=M
 D;JMP
 
@@ -212,7 +275,7 @@ A=M
 M=M-D
 @R0
 M=M+1
-@RETMain.fibonacci
+@RETMain.fibonacci1
 D=A
 @R0
 A=M
@@ -268,7 +331,7 @@ M=D
 @Main.fibonacci
 D;JMP
 
-(RETMain.fibonacci)
+(RETMain.fibonacci1)
 
 @R2
 D=M
@@ -298,7 +361,7 @@ A=M
 M=M-D
 @R0
 M=M+1
-@RETMain.fibonacci
+@RETMain.fibonacci1
 D=A
 @R0
 A=M
@@ -354,7 +417,7 @@ M=D
 @Main.fibonacci
 D;JMP
 
-(RETMain.fibonacci)
+(RETMain.fibonacci1)
 
 @R0
 M=M-1
@@ -373,7 +436,7 @@ M=D
 @5
 A=D-A
 D=M
-@RETMain.fibonacci
+@RETMain.fibonacci1
 M=D
 
 @R0
@@ -410,7 +473,7 @@ AM=M-1
 D=M
 @R1
 M=D
-@RETMain.fibonacci
+@RETMain.fibonacci1
 A=M
 D;JMP
 

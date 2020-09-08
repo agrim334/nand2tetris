@@ -102,7 +102,7 @@ M=D
 @5
 A=D-A
 D=M
-@RET
+@RET0
 M=D
 
 @R0
@@ -139,7 +139,7 @@ AM=M-1
 D=M
 @R1
 M=D
-@RET
+@RET0
 A=M
 D;JMP
 
