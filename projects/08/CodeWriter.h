@@ -155,6 +155,7 @@ void printCall(string func,int args){
 
 	printGoto(func,func,1);
 	printLabel("RET"+func+r,func,1);
+	rcall++;
 }
 
 void printinit(){

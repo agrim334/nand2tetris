@@ -70,7 +70,7 @@ A=M
 M=D
 @R0
 M=M+1
-@RETMain.fibonacci0
+@RETMain.fibonacci1
 D=A
 @R0
 A=M
@@ -126,7 +126,7 @@ M=D
 @Main.fibonacci
 D;JMP
 
-(RETMain.fibonacci0)
+(RETMain.fibonacci1)
 
 (Main.fibonacci$WHILE)
 
@@ -204,7 +204,7 @@ M=D
 @5
 A=D-A
 D=M
-@RETMain.fibonacci0
+@RETMain.fibonacci2
 M=D
 
 @R0
@@ -241,7 +241,7 @@ AM=M-1
 D=M
 @R1
 M=D
-@RETMain.fibonacci0
+@RETMain.fibonacci2
 A=M
 D;JMP
 
@@ -275,7 +275,7 @@ A=M
 M=M-D
 @R0
 M=M+1
-@RETMain.fibonacci1
+@RETMain.fibonacci3
 D=A
 @R0
 A=M
@@ -331,7 +331,7 @@ M=D
 @Main.fibonacci
 D;JMP
 
-(RETMain.fibonacci1)
+(RETMain.fibonacci3)
 
 @R2
 D=M
@@ -361,7 +361,7 @@ A=M
 M=M-D
 @R0
 M=M+1
-@RETMain.fibonacci1
+@RETMain.fibonacci4
 D=A
 @R0
 A=M
@@ -417,7 +417,7 @@ M=D
 @Main.fibonacci
 D;JMP
 
-(RETMain.fibonacci1)
+(RETMain.fibonacci4)
 
 @R0
 M=M-1
@@ -436,7 +436,7 @@ M=D
 @5
 A=D-A
 D=M
-@RETMain.fibonacci1
+@RETMain.fibonacci5
 M=D
 
 @R0
@@ -473,7 +473,7 @@ AM=M-1
 D=M
 @R1
 M=D
-@RETMain.fibonacci1
+@RETMain.fibonacci5
 A=M
 D;JMP
 

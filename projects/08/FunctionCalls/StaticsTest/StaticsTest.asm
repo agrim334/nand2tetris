@@ -77,7 +77,7 @@ A=M
 M=D
 @R0
 M=M+1
-@RETClass1.set0
+@RETClass1.set1
 D=A
 @R0
 A=M
@@ -133,7 +133,7 @@ M=D
 @Class1.set
 D;JMP
 
-(RETClass1.set0)
+(RETClass1.set1)
 
 @R0
 AM=M-1
@@ -154,7 +154,7 @@ A=M
 M=D
 @R0
 M=M+1
-@RETClass2.set0
+@RETClass2.set2
 D=A
 @R0
 A=M
@@ -210,14 +210,14 @@ M=D
 @Class2.set
 D;JMP
 
-(RETClass2.set0)
+(RETClass2.set2)
 
 @R0
 AM=M-1
 D=M
 @R5
 M=D
-@RETClass1.get0
+@RETClass1.get3
 D=A
 @R0
 A=M
@@ -273,9 +273,9 @@ M=D
 @Class1.get
 D;JMP
 
-(RETClass1.get0)
+(RETClass1.get3)
 
-@RETClass2.get0
+@RETClass2.get4
 D=A
 @R0
 A=M
@@ -331,7 +331,7 @@ M=D
 @Class2.get
 D;JMP
 
-(RETClass2.get0)
+(RETClass2.get4)
 
 (Class2.get$WHILE)
 
@@ -386,7 +386,7 @@ M=D
 @5
 A=D-A
 D=M
-@RETClass2.get0
+@RETClass2.get5
 M=D
 
 @R0
@@ -423,7 +423,7 @@ AM=M-1
 D=M
 @R1
 M=D
-@RETClass2.get0
+@RETClass2.get5
 A=M
 D;JMP
 
@@ -460,7 +460,7 @@ M=D
 @5
 A=D-A
 D=M
-@RETClass2.get1
+@RETClass2.get6
 M=D
 
 @R0
@@ -497,7 +497,7 @@ AM=M-1
 D=M
 @R1
 M=D
-@RETClass2.get1
+@RETClass2.get6
 A=M
 D;JMP
 
@@ -549,7 +549,7 @@ M=D
 @5
 A=D-A
 D=M
-@RETClass2.get2
+@RETClass2.get7
 M=D
 
 @R0
@@ -586,7 +586,7 @@ AM=M-1
 D=M
 @R1
 M=D
-@RETClass2.get2
+@RETClass2.get7
 A=M
 D;JMP
 
@@ -623,7 +623,7 @@ M=D
 @5
 A=D-A
 D=M
-@RETClass2.get3
+@RETClass2.get8
 M=D
 
 @R0
@@ -660,7 +660,7 @@ AM=M-1
 D=M
 @R1
 M=D
-@RETClass2.get3
+@RETClass2.get8
 A=M
 D;JMP
 
