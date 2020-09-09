@@ -1,7 +1,7 @@
 #include"Parser.h"
 
-void readcom(char ar[]){
-	vmf= fopen(ar,"r");
+void readcom(string ar){
+	vmf= fopen(ar.c_str(),"r");
 	int ptr=0;
 	int x = 0;
 	while(1){
@@ -33,25 +33,27 @@ int main(int argc, char* argv[]){
 	argc--;
 	int i = 0;
 	int y = strlen(argv[0]);
-	char a2[y];
-	char ar[y+5];
 	while(argv[0][i]!='.' && i < y )
 		i++;
 
 	if(argv[0][i]!='.') {
-		strcpy(ar,argv[0]);		
-		ar[y-1]='.';
-		ar[y]='a';
-		ar[y+1]='s';
-		ar[y+2]='m';
-		ar[y+3]='\0';
-		strcpy(a2,argv[0]);
-		asmf= fopen(strcat(a2,ar),"w+");
+		string a2(argv[0]);
+		string ar(argv[0]);
+		ar += ".asm";
+
+		if(a2.at(a2.length()-1)!='/')
+			a2 += "/";
+		else{
+			ar.erase(y-1);
+			ar += ".asm";
+		}
+		string temp = a2 + ar;
+		string t2;
+		asmf= fopen(temp.c_str(),"w+");
 		int fno=0;
 		if ((dir = opendir (argv[0])) != NULL) {
 			while ((ent = readdir (dir)) != NULL) {
 				int x = strlen(ent -> d_name);
-				strcpy(a2,argv[0]);
 				if(ent -> d_name[x-1] == 'm' && ent -> d_name[x-2] == 'v' && ent -> d_name[x-3] == '.'){
 					fno++;
 				}
@@ -64,7 +66,6 @@ int main(int argc, char* argv[]){
 		if ((dir = opendir (argv[0])) != NULL) {
 			while ((ent = readdir (dir)) != NULL) {
 				int x = strlen(ent -> d_name);
-				strcpy(a2,argv[0]);
 				if(ent -> d_name[x-1] == 'm' && ent -> d_name[x-2] == 'v' && ent -> d_name[x-3] == '.'){
 					vmfil[i] = to_ster(ent -> d_name);
 					if(vmfil[i] == "Sys.vm"){
@@ -79,33 +80,33 @@ int main(int argc, char* argv[]){
 		if(flag) {
 			printinit();
 			fname = vmfil[ind];
-			readcom(strcat(a2,vmfil[ind].c_str()));
+			t2 = "";
+			t2 = a2+vmfil[ind];
+			readcom(t2.c_str());
 			for(j=0;j<fno;j++){
-				strcpy(a2,argv[0]);
 				if(j!=ind) {
 					fname = vmfil[j];
-					readcom(strcat(a2,vmfil[j].c_str()));
+					t2 = "";
+					t2 = a2 + fname;
+					readcom(t2.c_str());
 				}
 			}
 		}
 		else{
 			for(j=0;j<fno;j++){
-				strcpy(a2,argv[0]);
 				fname = vmfil[j];
-				readcom(strcat(a2,vmfil[j].c_str()));
+				t2 = "";
+				t2 = a2 + fname;
+				readcom(t2.c_str());
 				}
 			}
 		closedir(dir);
 	}
 	else {
-		strcpy(ar,argv[0]);
-		string t(argv[0]);
-		fname = t;
-		ar[y-2]='a';
-		ar[y-1]='s';
-		ar[y]='m';
-		ar[y+1]='\0';
-		asmf= fopen(ar,"w+");
+		string ar(argv[0]);
+		ar.erase(y-3);
+		ar += ".asm";
+		asmf= fopen(ar.c_str(),"w+");
 		readcom(argv[0]);
 	}
 	
