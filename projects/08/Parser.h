@@ -106,6 +106,8 @@ void arg1(char ar[],int* ptr){
 		else if(comtype == "C_CALL")
 			printCall(segcom,idx);
 	}
+	else if(comtype == "C_RETURN")
+		printReturn();
 }
 
 void whitespace(char ar[],int* ptr){
