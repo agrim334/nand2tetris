@@ -1,0 +1,219 @@
+class TicTacToe {
+	static Array xcoords;
+	static Array ycoords;  //Store x and y coordinate of each cell of the 3x3 board
+	field char P1,P2;		// Store player choices
+	field Array cells;    // Stores whether X,O or empty cell ( X == 1 , O == 2 ,Empty == 0) 3x3 2D matrix equivalent to a 9 element 1D array 
+							// for i,j position in the 2D grid, array position is i*3+j   0 <= i <=  3 0 and <= j <=  3
+
+	//getter and setter for P1 and P2 to remember character choices for player 1 and 2
+
+	method void setP1(char m){
+		let P1 = m;
+		return;
+	}
+
+	method void setP2(char m){
+		let P2 = m;
+		return;
+	}
+
+	method char getP1(){
+		return P1;
+	}
+
+	method char getP2(){
+		return P2;
+	}
+
+	method int BoundaryCheckAndReposition(int location) {
+		if((location > -1) & (location < 9)){
+			return location;
+		}							//reposition cursor if out of bound
+		return 0;
+	}
+
+	method int makeMove(char mark) {
+		var int curposition;
+		var int kb;
+		let curposition = 0;
+		do drawCursor(curposition,0);
+		
+		while(true){			//until a valid square is filled keep polling 
+			let kb = Keyboard.keyPressed();
+			if(kb = 128){ 					//Enter key press to fill cell if not empty else reposition
+				do drawCursor(curposition,1);
+				if(cells[curposition] = 0) {
+					do move(curposition, mark);
+					return curposition;
+				}
+				else {
+					do drawCursor(curposition,0);
+				}
+			}
+			if(kb = 130){ 
+				do drawCursor(curposition,1);			//left arrow key press
+				let curposition = BoundaryCheckAndReposition(curposition - 1);
+				do drawCursor(curposition,0);
+			}
+			if(kb = 131){ 
+				do drawCursor(curposition,1);			// Up arrow key press
+				let curposition = BoundaryCheckAndReposition(curposition - 3);
+				do drawCursor(curposition,0);
+			}
+			if(kb = 132){ 
+				do drawCursor(curposition,1);								//right arrow key press
+				let curposition = BoundaryCheckAndReposition(curposition + 1);
+				do drawCursor(curposition,0);
+			}
+			if(kb = 133){ 
+				do drawCursor(curposition,1);			// Down arrow key press
+				let curposition = BoundaryCheckAndReposition(curposition + 3);
+				do drawCursor(curposition,0);
+			}
+		}
+		return 0;
+	}
+
+	method boolean checkfilled(int x, int y, int z){
+		if((x = y) & (y = z) & ~(x = 0)){
+			return true;
+		}
+		return false;
+	}
+
+	method void move(int location, char mark){
+		var int x;
+		var int y;
+		let location = BoundaryCheckAndReposition(location);		//reposition if out of bound
+		let x = xcoords[location];									//extract coordinates corresponding to array location of cell treat them as center
+		let y = ycoords[location];
+	
+		if(mark = 88) {											//based on player turn update cells array to new cell character and visually draw X or O on screen
+			let cells[location] = 1;
+			do Screen.drawLine(x - 15 , y + 15, x + 15, y - 15);				//Draw an X
+			do Screen.drawLine(x + 15 , y + 15, x - 15, y - 15);
+		}
+		if(mark = 79){
+			let cells[location] = 2;
+			do Screen.drawCircle(x, y, 15);						//Draw a darkened circle for O
+		}
+		return;
+	}
+
+	method void drawCursor(int location,int remove){
+		var int x, y;
+		let location = BoundaryCheckAndReposition(location);
+		let x = xcoords[location];
+		let y = ycoords[location];
+		if(remove = 1){ 
+			do Screen.setColor(false);				//remove cursor at position
+		}
+		if(remove = 0) {
+			do Screen.setColor(true);			//draw cursor at position
+		}
+		do Screen.drawLine(x + 20, y + 20, x - 20, y + 20);
+		do Screen.setColor(true);
+
+		return; 
+	}
+
+	method string declarewinner(int mark){  // decide winner on basis of P1 and P2's choice of characters
+		if(mark = 1) {
+			if(P1 = 88) {  //88 corresponds to X, 79 to O
+				return "Player 1";
+			}
+			if(P2 = 88) {
+				return "Player 2";
+			}
+		}
+		if (mark = 2) {
+			if(P1 = 79) {
+				return "Player 1";
+			}
+			if(P2 = 79) {
+				return "Player 2";
+			}
+		}
+		return "No one";
+	}
+
+
+	constructor TicTacToe new(){   	//create new TicTacToe board
+		var int i;
+		let xcoords = Array.new(9);		//store x and y coords for display of cells
+		let ycoords = Array.new(9); 
+
+		let i = 0;
+
+		while(i < 3){
+
+			let xcoords[i] = 192 + (64*i);
+			let xcoords[i + 3] = xcoords[i];
+			let xcoords[i + 6] = xcoords[i + 3];
+
+			let ycoords[i] = 64;								// initialize cell positions on screen 
+			let ycoords[i + 3] = 128;
+			let ycoords[i + 6] = 192;
+			let i = i + 1;
+		}
+
+		let cells = Array.new(9);
+
+		do Screen.drawLine(224, 32, 224, 224);
+		do Screen.drawLine(288, 32, 288, 224);
+		do Screen.drawLine(160, 96, 352, 96);			// construct the grid
+		do Screen.drawLine(160, 160, 352, 160);
+
+		return this;
+	}
+
+	method int winner(){
+		var int x;
+		if((checkfilled(cells[0], cells[1], cells[2])) | (checkfilled(cells[3], cells[4], cells[5])) | (checkfilled(cells[6], cells[7], cells[8]))) {		//filled row check
+			let x = cells[0];
+			if(x=0){
+				let x = cells[3];								//extract winner symbol					
+			}
+			if(x=0){
+				let x = cells[6];
+			}
+
+			do Output.printString("Winner is ");
+			do Output.printString(declarewinner(x));
+			do Output.printString(" :)");
+			do Output.println();
+			return 1;
+		}
+		if((checkfilled(cells[0], cells[3], cells[6])) | (checkfilled(cells[1], cells[4], cells[7])) | (checkfilled(cells[2], cells[5], cells[8])) ) { 	//filled column check
+			let x = cells[0];
+			if(x=0){
+				let x = cells[1];
+			}
+			if(x=0){			//extract winner symbol
+				let x = cells[2];
+			}
+
+			do Output.printString("Winner is ");
+			do Output.printString(declarewinner(x));
+			do Output.printString(" :)");
+			do Output.println();
+			return 1;
+		}
+		if( (checkfilled(cells[0], cells[4], cells[8])) |	(checkfilled(cells[2], cells[4], cells[6]))) { 	//filled diagonal check
+			let x = cells[4];
+			if(x=0){
+				let x = cells[0];
+			}
+			if(x=0){						//extract winner symbol
+				let x = cells[2];
+			}
+
+			do Output.printString("Winner is ");
+			do Output.printString(declarewinner(x));
+			do Output.printString(" :)");
+			do Output.println();
+			return 1;
+		}
+		return 0;
+	}
+}

@@ -1,0 +1,251 @@
+class TicTacToe {
+	field Array squares;    // Stores whether X,O or empty cell ( X == 1 , O == 2 ,Empty == 0)
+	static Array xcoords;
+	static Array ycoords;  //Store x and y coordinate of each cell of the 3x3 board
+	field char P1,P2;
+
+	constructor TicTacToe new(){
+		var int i;
+		let xcoords = Array.new(9);
+		let ycoords = Array.new(9); 
+
+		let i = 0;
+
+		while(i < 3){
+			let xcoords[i] = 192 + 64*i;
+			let xcoords[i + 3] = xcoords[i];
+			let xcoords[i + 6] = xcoords[i + 3];
+			let ycoords[i] = 64;								// initialize cell positions on screen 
+			let ycoords[i + 3] = 128;
+			let ycoords[i + 6] = 192;
+			let i = i + 1;
+		}
+
+		let squares = Array.new(9);
+
+		do drawGrid();				// construct the grid
+		return this;
+	}
+
+	method void setP1(char m){
+		let P1 = m;
+		return;
+	}
+	method void setP2(char m){
+		let P2 = m;
+		return;
+	}
+
+	method char getP1(){
+		return P1;
+	}
+
+	method char getP2(){
+		return P2;
+	}
+
+	method void drawGrid(){
+		do Screen.drawLine(224, 32, 224, 224);
+		do Screen.drawLine(288, 32, 288, 224);
+		do Screen.drawLine(160, 96, 352, 96);
+		do Screen.drawLine(160, 160, 352, 160);
+		return;
+	}
+
+	method void eraseCursor(int location){
+		let location = BoundaryCheckAndReposition(location);
+		do Screen.setColor(false);
+		do drawCursor(location);
+		do Screen.setColor(true);
+		return; 
+	}
+
+	method void drawCursor(int location){
+		var int left, right, top, bottom;
+		var int x, y;
+		let location = BoundaryCheckAndReposition(location);
+		let x = xcoords[location];
+		let y = ycoords[location];
+
+		let left = x - 22;
+		let right = x + 22;
+		let top = y + 22;
+		let bottom = y - 22;
+		
+		do Screen.drawLine(left, top, left, bottom);
+		do Screen.drawLine(left, top, right, top);
+		do Screen.drawLine(right, top, right, bottom);
+		do Screen.drawLine(right, bottom, left, bottom);
+
+		return; 
+	}
+
+	method boolean EmptyCell(int location){
+		if(squares[location] = 0){
+			return true;
+		}
+		return false;
+	}
+
+	method int BoundaryCheckAndReposition(int location){
+		if((location > -1) & (location < 9)){
+			return location;
+		}
+		return 4;
+	}
+
+	method int makeMove(char mark){
+		var int curposition;
+		var int kbmove;
+		let curposition = 0;
+		do drawCursor(curposition);
+		
+		while(true){
+			let kbmove = Keyboard.keyPressed();
+			if(kbmove = 132){ 
+				do eraseCursor(curposition);
+				let curposition = BoundaryCheckAndReposition(curposition + 1);
+				do drawCursor(curposition);
+			}
+			if(kbmove = 130){ 
+				do eraseCursor(curposition);
+				let curposition = BoundaryCheckAndReposition(curposition - 1);
+				do drawCursor(curposition);
+			}
+			if(kbmove = 131){ 
+				do eraseCursor(curposition);
+				let curposition = BoundaryCheckAndReposition(curposition - 3);
+				do drawCursor(curposition);
+			}
+			if(kbmove = 133){ 
+				do eraseCursor(curposition);
+				let curposition = BoundaryCheckAndReposition(curposition + 3);
+				do drawCursor(curposition);
+			}
+			if(kbmove = 128){ 
+				do eraseCursor(curposition);
+				if(EmptyCell(curposition)) {
+					do move(curposition, mark);
+					return curposition;
+				}
+				else {
+					do drawCursor(curposition);
+				}
+			}
+		}
+		return 0;
+	}
+
+	method void drawO(int x, int y){
+		do Screen.drawCircle(x, y, 20);
+		do Screen.setColor(false);
+		return;
+	}
+
+	method void drawX(int x, int y){
+		var int left, right, top, bottom;
+
+		let left = x - 15;
+		let right = x + 15;
+		let top = y + 15;
+		let bottom = y - 15;
+
+		do Screen.drawLine(left, top, right, bottom);
+		do Screen.drawLine(right, top, left, bottom);
+
+		return;
+	}
+
+	method void move(int location, char mark){
+		var int xcenter;
+		var int ycenter;
+		let location = BoundaryCheckAndReposition(location);
+		let xcenter = xcoords[location];
+		let ycenter = ycoords[location];
+
+		if (mark = 88) {
+			let squares[location] = 1;
+			do drawX(xcenter, ycenter);
+		}
+		if(mark = 79){
+			let squares[location] = 2;
+			do drawO(xcenter, ycenter);
+		}
+		return;
+	}
+
+	method string declarewinner(int id){  // convert integer representation to string representation of markings
+		if(id = 1) {
+			if(P1 = 88) {
+				return "Player 1";
+			}
+			else {
+				return "Player 2";
+			}
+		}
+		if (id = 2) {
+			if(P1 = 79) {
+				return "Player 1";
+			}
+			else {
+				return "Player 2";
+			}
+		}
+		return "";
+	}
+
+	method boolean checkfilled(int x, int y, int z){
+		if((x = 0) | (y = 0) | (z = 0)){
+			return false;
+		}
+		if((x = y) & (y = z)){
+			return true;
+		}
+		return false;
+	}
+
+	method int winner(){
+		var int x;
+		if((checkfilled(squares[0], squares[1], squares[2])) | (checkfilled(squares[3], squares[4], squares[5])) | (checkfilled(squares[6], squares[7], squares[8]))) {		//row check
+			let x = squares[0];
+			if(~x){
+				let x = squares[3];
+			}
+			if(~x){
+				let x = squares[6];
+			}
+			do Output.printString("Winner is ");
+			do Output.printString(declarewinner(x));
+
+			return 1;
+		}
+		if((checkfilled(squares[0], squares[3], squares[6])) | (checkfilled(squares[1], squares[4], squares[7])) | (checkfilled(squares[2], squares[5], squares[8])) ) { 	//col check
+			let x = squares[0];
+			if(~x){
+				let x = squares[1];
+			}
+			if(~x){
+				let x = squares[2];
+			}
+
+			do Output.printString("Winner is ");
+			do Output.printString(declarewinner(x));
+			return 1;
+		}
+		if( (checkfilled(squares[0], squares[4], squares[8])) |	(checkfilled(squares[2], squares[4], squares[6]))) { 	//diagonal check
+			let x = squares[4];
+			if(~x){
+				let x = squares[0];
+			}
+			if(~x){
+				let x = squares[2];
+			}
+
+			do Output.printString("Winner is ");
+			do Output.printString(declarewinner(x));
+			return 1;
+		}
+		return 0;
+	}
+
+}

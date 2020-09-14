@@ -1,0 +1,67 @@
+class Main {
+  function void main() {
+	var TicTacToe board;
+	var int winner;	
+	var int turn;
+	var int choice;
+	var int filled;
+	var int ex;
+	let ex = 1;
+
+	do Output.printString("Welcome to TicTacToe game for 2 human players.");
+	do Output.println();
+
+	let choice = 0;
+
+
+	do Output.printString("Player 1, Select X or O.");
+	do Output.println();
+	
+	while (~(choice = 79) & ~(choice = 88)) {
+		let choice = Keyboard.keyPressed();	
+		if((choice = 79) | (choice = 88)) {
+			do Output.printString("Beginning game");
+			do Output.println();
+			do Output.printString("Player 1 Selected ");
+			do Output.printChar(choice);
+			do Output.println();
+		}
+	}
+
+	let board = TicTacToe.new();
+	let filled = 0;
+
+	if (choice = 79) {
+		do board.setP1(79);
+		do board.setP2(88);
+	}
+	else {
+		do board.setP1(88);
+		do board.setP2(79);
+	}
+
+	let winner = 0;
+	let turn = 1;
+
+	while ((winner = 0) & (filled < 9)) {
+		if (turn) {
+			do board.makeMove(board.getP1());
+			let turn = 0;
+		}
+		else {
+			do board.makeMove(board.getP2());		
+			let turn = 1;
+		}
+		let winner = board.winner();
+		let filled = filled + 1;
+	}
+
+	if ((filled = 9) & (winner = 0)) {
+		do Output.printString("It's a draw :/");
+		do Output.println();
+	}
+	do Output.printString("Game Over. Reset Machine to play again");
+	do Output.println();
+	return;
+	}
+}
