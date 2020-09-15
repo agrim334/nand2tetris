@@ -28,16 +28,17 @@ string keyword_identifier(char ar[] , int* ptr){
 	return "id " + s;
 }
 string symbol(char ar[] , int* ptr){
-	char s = ar[*ptr];
-	*ptr = *ptr+1;
+	string x(1,ar[*ptr]);
 	char symbols[] = {'{' , '}' , '(' , ')' , '[' , ']' , ';' , '.' , ',' , '-' , '+' , '=' , '/' , '*' , '&' , '|' , '~' , '<' , '>'};
 	int i;
-	int n =  sizeof(symbols)/sizeof(symbols[0]);
-	for(i = 0; i<n;i++){
-		if(s == symbols[i])
-			return "symbol: "+s;
+	for(i = 0; i<19;i++){
+		if(ar[*ptr] == symbols[i]){
+			*ptr = *ptr+1;
+			return "symbol: "+ x;
+		}
 	}
-	return "bad symbol " + s;
+	*ptr = *ptr+1;
+	return "bad symbol " + x;
 }
 
 int intconstant(char ar[] , int* ptr){
@@ -52,10 +53,12 @@ int intconstant(char ar[] , int* ptr){
 }
 string stringconstant(char ar[] , int* ptr){
 	string s = "";
-	while(ar[*ptr] != '"' && (ar[*ptr] != '\n')) {
+	*ptr = *ptr + 1;
+	while(ar[*ptr] != '\"' && ar[*ptr] != '\n' && ar[*ptr] != '\0' ) {
 		s += ar[*ptr];
 		*ptr = *ptr+1;
 	}
+	*ptr = *ptr + 1;
 	return "string literal: "+ s;
 }
 

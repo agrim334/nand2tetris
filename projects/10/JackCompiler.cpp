@@ -23,6 +23,8 @@ void readcom(string ar){
 			x++;
 		while(curcom[ptr] != '\n') {
 			whitespace(curcom,&ptr);
+			if(curcom[ptr] == '\n')
+				continue;
 			if(curcom[ptr]=='/'){
 				if(ptr+1 < x && curcom[ptr+1] == '/')
 					comments(curcom,&ptr,1);
@@ -44,9 +46,9 @@ void readcom(string ar){
 				s = keyword_identifier(curcom,&ptr);
 				printf("%s\n",s.c_str());
 			}
-			else if(curcom[ptr] == '"'){
+			else if(curcom[ptr] == '\"'){
 				s = stringconstant(curcom,&ptr);
-//				printf("%s\n",s.c_str());
+				printf("%s\n",s.c_str());
 			}
 			else{
 				s = symbol(curcom,&ptr);
