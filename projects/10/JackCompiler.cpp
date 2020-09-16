@@ -1,67 +1,61 @@
 #include"lexer.h"
 
-bool hasMoreCommands(){
-	return !feof(jackf)?true:false;
-}
-void advance(){
-	fgets(curcom,255,jackf);
-}
-
 void readcom(string ar){
 	jackf= fopen(ar.c_str(),"r");
 	string s;
 	int ptr=0;
 	int x = 0;
+	char c;
 	while(1){
 		ptr=0;
 		advance();
-		if(!hasMoreCommands())
+		if(!hasMoreTokens())
 			break;
-		whitespace(curcom,&ptr);
+		whitespace(curtok,&ptr);
 		x = 0;
-		while(curcom[x]!='\n')
+		while(curtok[x]!='\n')
 			x++;
-		while(curcom[ptr] != '\n') {
-			whitespace(curcom,&ptr);
-			if(curcom[ptr] == '\n')
+		while(curtok[ptr] != '\n') {
+
+			whitespace(curtok,&ptr);
+			if(curtok[ptr] == '\n')
 				continue;
-			if(curcom[ptr]=='/'){
-				if(ptr+1 < x && curcom[ptr+1] == '/')
-					comments(curcom,&ptr,1);
-				else if(ptr+1 < x && curcom[ptr+1] == '*'){
-					if(ptr+2 < x && curcom[ptr+2] == '*')
-						ptr = ptr + 3;
-					comments(curcom,&ptr,2);
-				}
-				else{
-					s = symbol(curcom,&ptr);
-					printf("%s\n",s.c_str());
-				}
+
+			comments(curtok,&ptr);
+			if(curtok[ptr] == '\n')
+				continue;
+
+			s = tokenType(curtok,ptr);
+			if(s == "INT_CONST"){
+				x = intconstant(curtok,&ptr);
+				printf("%d\n",x);
 			}
-			else if(curcom[ptr] >= '0' && curcom[ptr] <= '9'){
-				x = intconstant(curcom,&ptr);
-				printf("integer constant %d\n",x);
-			}
-			else if((curcom[ptr] >= 'a' && curcom[ptr] <= 'z') || (curcom[ptr] >= 'A' && curcom[ptr] <= 'Z') || curcom[ptr] == '_'){
-				s = keyword_identifier(curcom,&ptr);
+			else if(s == "STRING_CONST"){
+				s = stringconstant(curtok,&ptr);
 				printf("%s\n",s.c_str());
 			}
-			else if(curcom[ptr] == '\"'){
-				s = stringconstant(curcom,&ptr);
+			else if(s == "IDENTIFIER"){
+				s = identifier(curtok,&ptr);
 				printf("%s\n",s.c_str());
 			}
-			else{
-				s = symbol(curcom,&ptr);
-				printf("%s\n",s.c_str());				
+			else if(s == "KEYWORD"){
+				s = keyword(curtok,&ptr);
+				printf("%s\n",s.c_str());
+			}
+			else if(s == "SYMBOL") {
+				c = symbol(curtok,&ptr);
+				printf("%c\n",c);
 			}
 		}
 	}
 	fclose(jackf);
 }
+
 string to_ster(char* ar){
 	string s(ar);
 	return s;
 }
+
 int main(int argc, char* argv[]){
 	argv++;
 	argc--;
