@@ -1,53 +1,11 @@
-#include"lexer.h"
+#include"parser.h"
 
 void readcom(string ar){
 	jackf= fopen(ar.c_str(),"r");
-	string s;
-	int ptr=0;
-	int x = 0;
-	char c;
-	while(1){
-		ptr=0;
-		advance();
-		if(!hasMoreTokens())
-			break;
-		whitespace(curtok,&ptr);
-		x = 0;
-		while(curtok[x]!='\n')
-			x++;
-		while(curtok[ptr] != '\n') {
-
-			whitespace(curtok,&ptr);
-			if(curtok[ptr] == '\n')
-				continue;
-
-			comments(curtok,&ptr);
-			if(curtok[ptr] == '\n')
-				continue;
-
-			s = tokenType(curtok,ptr);
-			if(s == "INT_CONST"){
-				x = intconstant(curtok,&ptr);
-				printf("%d\n",x);
-			}
-			else if(s == "STRING_CONST"){
-				s = stringconstant(curtok,&ptr);
-				printf("%s\n",s.c_str());
-			}
-			else if(s == "IDENTIFIER"){
-				s = identifier(curtok,&ptr);
-				printf("%s\n",s.c_str());
-			}
-			else if(s == "KEYWORD"){
-				s = keyword(curtok,&ptr);
-				printf("%s\n",s.c_str());
-			}
-			else if(s == "SYMBOL") {
-				c = symbol(curtok,&ptr);
-				printf("%c\n",c);
-			}
-		}
-	}
+	lineno = 0;
+	lookahead = 0;
+	curtok = "";
+	compileExp();
 	fclose(jackf);
 }
 

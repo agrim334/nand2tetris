@@ -1,4 +1,9 @@
 #include"lexer.h"
+void compileTerm();
+void compileSubroutine();
+void compileExplist();
+void compileExp();
+
 /*
 void compileClass(){
 	if(curtok == "class"){
@@ -183,13 +188,13 @@ void compileSubroutine(){
 		t = tokenType();
 		if(t == "SYMBOL") {
 			s = symbol();
-			if(s == '(' {
+			if(s == '(') {
 				printf("<symbol> %c </symbol>\n",s);
 				compileExplist();
 				t = tokenType();
 				if(t == "SYMBOL"){
 					s = symbol();
-					if(s == ")"){
+					if(s == ')'){
 						printf("<symbol> %c </symbol>\n",s);
 						return;
 					}
@@ -198,7 +203,7 @@ void compileSubroutine(){
 					advance();
 					if(t == "SYMBOL"){
 						s = symbol();
-						if(s == ")"){
+						if(s == ')'){
 							printf("<symbol> %c </symbol>\n",s);
 							return;
 						}
@@ -216,12 +221,12 @@ void compileSubroutine(){
 					t = tokenType();
 					if(t == "SYMBOL") {
 						s = symbol();
-						if(s == "(") {
+						if(s == '(') {
 							compileExplist();
 							t = tokenType();
 							if(t == "SYMBOL"){
 								s = symbol();
-								if(s == ")")
+								if(s == ')')
 									return;
 							}
 						}
@@ -229,7 +234,7 @@ void compileSubroutine(){
 							advance();
 							if(t == "SYMBOL"){
 								s = symbol();
-								if(s == ")")
+								if(s == ')')
 									return;
 							}
 						}
@@ -245,8 +250,8 @@ char op(){
 	char oper = symbol();
 	char opsym[] = {'+','-','*','/','&','|','>','<','='};
 	for(int i = 0 ; i < 9;i++){
-		if(unoper == unopsym[i])
-			return unopsym[i];
+		if(oper == opsym[i])
+			return opsym[i];
 	}
 	return '\0';
 }
@@ -307,7 +312,6 @@ void compileTerm(){
 					s = symbol();
 					if( s == ']'){
 						printf("<symbol> %c </symbol>\n",s);
-						return;
 					}
 				}
 			}
@@ -320,7 +324,6 @@ void compileTerm(){
 					s = symbol();
 					if( s == ')'){
 						printf("<symbol> %c </symbol>\n",s);
-						return;
 					}
 				}
 			}
@@ -337,7 +340,6 @@ void compileTerm(){
 				s = symbol();
 				if( s == ')'){
 					printf("<symbol> %c </symbol>\n",s);
-					return;
 				}
 		}
 		else{
@@ -349,13 +351,19 @@ void compileTerm(){
 			}
 		}
 	}
+	printf("</Term>\n");
 }
 
 void compileExp(){
 	printf("<Expression>\n");
 	compileTerm();
-	advance();
 	string t = tokenType();
+
+	if( t != "SYMBOL")	
+		advance();
+
+	t = tokenType();
+	
 	if (t == "SYMBOL") {
 		char s = op();
 		if(s){
