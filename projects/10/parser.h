@@ -284,6 +284,7 @@ void compileTerm(){
 	string x;
 	int y;
 	char s;
+
 	if(t == "INT_CONST"){
 		y = intconstant();
 		printf("<integer> %d  </integer>\n",y);
@@ -301,6 +302,9 @@ void compileTerm(){
 		printf("<identifier> %s </identifier>\n",x.c_str());
 		advance();
 		t = tokenType();
+		s = symbol();
+		printf("%s %s",curtok.c_str(),t.c_str());
+
 		if(t == "SYMBOL"){
 			s = symbol();
 			if(s == '['){
@@ -363,7 +367,7 @@ void compileExp(){
 		advance();
 
 	t = tokenType();
-	
+
 	if (t == "SYMBOL") {
 		char s = op();
 		if(s){

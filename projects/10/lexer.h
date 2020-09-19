@@ -54,8 +54,8 @@ string tokenType(){
 			if(i >= curtok.length())
 				break;
 		}
-		if(i != curtok.length())
-			return "BAD IDENTIFIER or class";
+//		if(i != curtok.length())
+//			return "BAD IDENTIFIER or class";
 
 		string kwar[] = {"class" , "constructor" , "function"  , "method" , "field" , "static" , "var" , "int" , "char" , "boolean" , "void" , "true" , "let" , "this" , "null" , "false" , "while" , "else" , "do" , "if" , "return"};
 		int n =  sizeof(kwar)/sizeof(kwar[0]);
@@ -101,6 +101,7 @@ void advance(){
 		curtok += curline[lookahead];
 		lookahead++;
 	}
+
 }
 
 string keyword(){
@@ -125,10 +126,6 @@ string keyword(){
 string identifier(){
 	string s = "";
 	int i = 0;
-	if(curtok.at(i) >= '0' && curtok.at(i) <= '9' ){
-		printf("ERROR invalid identifier name");
-		return s;
-	}
 	while((curtok.at(i) >= '0' && curtok.at(i) <= '9') || (curtok.at(i) >= 'a' && curtok.at(i) <= 'z') || (curtok.at(i) >= 'A' && curtok.at(i) <= 'Z') || curtok.at(i) == '_'){
 		s += curtok.at(i);
 		i++;
@@ -143,7 +140,6 @@ char symbol(){
 	int i;
 	for(i = 0; i<19;i++){
 		if(curtok.at(0) == symbols[i]){
-			i++;
 			return symbols[i];
 		}
 	}
