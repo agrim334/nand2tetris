@@ -86,46 +86,44 @@ char peek(){
 	return i<lexeme.length()?lexeme.at(i):'\0';
 }
 void advance(){
-	if(lexeme == ""){
+	if(!hasMoreTokens())
+		return;
+
+	while(curline[lookahead] == '\n' || curline[lookahead] == '\0' || curline[lookahead] == '\r'){
+		fgets(curline,255,jackf);
+		lookahead = 0;
+
 		if(!hasMoreTokens())
 			return;
-		while(curline[lookahead] == '\n' || curline[lookahead] == '\0' || curline[lookahead] == '\r'){
-			fgets(curline,255,jackf);
-			lookahead = 0;
-			lexeme = "";
-
-			if(!hasMoreTokens())
-				return;
-			whitespace(curline);
-			comments(curline);
-			lineno++;
-			}
-
 		whitespace(curline);
 		comments(curline);
+		lineno++;
+	}
 
-		while(lexeme.length() == 0 || curline[lookahead] != '\n' && curline[lookahead] != ' ' && curline[lookahead] != '\r' && curline[lookahead] != '\v' && curline[lookahead] != '\t'){
-			if(curline[lookahead] == '\"'){
+	whitespace(curline);
+	comments(curline);
+
+	while(lexeme.length() == 0 || curline[lookahead] != '\n' && curline[lookahead] != ' ' && curline[lookahead] != '\r' && curline[lookahead] != '\v' && curline[lookahead] != '\t'){
+		if(curline[lookahead] == '\"'){
+			lexeme += curline[lookahead];
+			lookahead++;
+			while(curline[lookahead] != '\"' && curline[lookahead] != '\n' && curline[lookahead] != '\0' ) {
 				lexeme += curline[lookahead];
 				lookahead++;
-				while(curline[lookahead] != '\"' && curline[lookahead] != '\n' && curline[lookahead] != '\0' ) {
-					lexeme += curline[lookahead];
-					lookahead++;
-				}
-				if(curline[lookahead] != '\n' && curline[lookahead] != ' ' && curline[lookahead] != '\r' && curline[lookahead] != '\v' && curline[lookahead] != '\t'){
-					lexeme += curline[lookahead];
-					lookahead++;
-				}
 			}
-			else{
+			if(curline[lookahead] != '\n' && curline[lookahead] != ' ' && curline[lookahead] != '\r' && curline[lookahead] != '\v' && curline[lookahead] != '\t'){
 				lexeme += curline[lookahead];
 				lookahead++;
 			}
 		}
+		else{
+			lexeme += curline[lookahead];
+			lookahead++;
+		}
 	}
 	int i = 0;
+	printf("%s ",lexeme.c_str());
 	curtok = "";
-
 	if(i < lexeme.length() && (lexeme.at(i) >= '0' && lexeme.at(i) <= '9')){
 		while(i < lexeme.length() && (lexeme.at(i) >= '0' && lexeme.at(i) <= '9')) {
 			curtok += lexeme.at(i); 
@@ -174,7 +172,7 @@ void advance(){
 			lexeme.erase(lexeme.begin(),lexeme.begin()+i+1);
 
 	}
-	else {
+	else if (0 < lexeme.length()){
 		char symbols[] = {'{' , '}' , '(' , ')' , '[' , ']' , ';' , '.' , ',' , '-' , '+' , '=' , '/' , '*' , '&' , '|' , '~' , '<' , '>'};
 		for(i = 0; i<19;i++){
 			if(lexeme.at(0) == symbols[i]){
@@ -183,14 +181,12 @@ void advance(){
 					lexeme.erase();
 					lexeme = "";
 				}
-				else{
+				else
 					lexeme.erase(lexeme.begin(),lexeme.begin()+1);
-				}
 				break;
 			}
 		}
 	}
-//	printf("%s\n",curtok.c_str());
 }
 
 string keyword(){

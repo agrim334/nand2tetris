@@ -37,8 +37,8 @@ string kwconst(){
 }
 
 void compileSubroutine(){
-	 printf("<Subroutine>\n");
-	 printf("<subroutine identifier> %s </subroutine identifier>\n", curtok.c_str());
+	printf("<Subroutine>\n");
+	printf("<subroutine identifier> %s </subroutine identifier>\n", curtok.c_str());
 	advance();
 	string t = tokenType();
 	string nm;
@@ -52,14 +52,14 @@ void compileSubroutine(){
 			if( t == "SYMBOL"){
 				s = symbol();
 				if(s == ')'){
-					 printf("</Subroutine>\n");
+					printf("</Subroutine>\n");
 				}
 			}
 		}
 		else if(s == '.'){
 			advance();
 			nm = identifier();
-			 printf("<subroutine identifier> %s </subroutine identifier>\n", nm.c_str());
+			printf("<subroutine identifier> %s </subroutine identifier>\n", nm.c_str());
 			advance();
 			t = tokenType();
 
@@ -72,7 +72,7 @@ void compileSubroutine(){
 					if( t == "SYMBOL"){
 						s = symbol();
 						if(s == ')'){
-							 printf("</Subroutine>\n");
+							printf("</Subroutine>\n");
 						}
 					}
 				}
@@ -91,11 +91,10 @@ void compileTerm_(){
 		printf("<Term>\n");
 		printf("<function call identifier> %s </ function call identifier>\n",curtok.c_str());
 		compileSubroutine();
+		advance();
 		t = tokenType();
 		if(t == "SYMBOL" ){
-			s = symbol();
-			if(s == ']'){
-				printf("<symbol> %c </symbol>\n",s);
+			if(curtok == ")"){
 				return;
 			}
 		}
@@ -106,19 +105,13 @@ void compileTerm_(){
 		advance();
 		printf("<symbol> %s </symbol>\n",curtok.c_str());
 		compileExp();
+		advance();
 		t = tokenType();
 		if(t == "SYMBOL" ){
-			s = symbol();
-			if(s == ']'){
-				printf("<symbol> %c </symbol>\n",s);
+			if(curtok == "]"){
 				return;
 			}
 		}
-	}
-	else{
-		printf("<Term>\n");
-		printf("<identifier> %s </identifier>\n",curtok.c_str());
-
 	}
 }
 
@@ -131,19 +124,19 @@ void compileTerm(){
 	char s;
 	if(t == "INT_CONST"){
 		y = intconstant();
-		 printf("<Term>\n");
-		 printf("<integer> %d  </integer>\n",y);
+		printf("<Term>\n");
+		printf("<integer> %d  </integer>\n",y);
 		
 	}
 	else if( t == "STRING_CONST"){
 		x = stringconstant();
-		 printf("<Term>\n");
-		 printf("<string> %s  </string>\n",x.c_str());
+		printf("<Term>\n");
+		printf("<string> %s  </string>\n",x.c_str());
 	}
 	else if( t == "KEYWORD"){
 		x = kwconst();
-		 printf("<Term>\n");
-		 printf("<keywordconst> %s </keywordconst>\n",x.c_str());
+		printf("<Term>\n");
+		printf("<keywordconst> %s </keywordconst>\n",x.c_str());
 	}
 	else if( t == "IDENTIFIER"){
 		x = identifier();
@@ -152,30 +145,30 @@ void compileTerm(){
 	else if( t == "SYMBOL"){
 		s = symbol();
 		if(s == '('){
-			 printf("<Term>\n");
-			 printf("<symbol> %c </symbol>\n",s);
+			printf("<Term>\n");
+			printf("<symbol> %c </symbol>\n",s);
 			compileExp();
 			advance();
 			t = tokenType();
 			if (t == "SYMBOL"){
 				s = symbol();
 				if( s == ')'){
-					 printf("<symbol> %c </symbol>\n",s);
+					printf("<symbol> %c </symbol>\n",s);
 				}
 			
 		}
 		else{
 			s = unaryop();
 			if(s){
-				 printf("<Term>\n");
-				 printf("<symbol> %c </symbol>\n",s);
+				printf("<Term>\n");
+				printf("<symbol> %c </symbol>\n",s);
 				compileTerm();
 				}
 			}
 			
 		}
 	}
-	 printf("</Term>\n");
+	printf("</Term>\n");
 }
 
 void compileExp(){
@@ -188,7 +181,7 @@ void compileExp(){
 		char s = op();
 		if(s){
 			while(s){
-				 printf("<symbol> %c </symbol>\n",s);
+				printf("<symbol> %c </symbol>\n",s);
 				compileTerm();
 				advance();
 				t = tokenType();
@@ -199,7 +192,7 @@ void compileExp(){
 			}
 		}
 	}
-	 printf("</Expression>\n");
+	printf("</Expression>\n");
 }
 
 void compileExplist(){
@@ -209,11 +202,11 @@ void compileExplist(){
 	if (t == "SYMBOL") {
 		s = symbol();
 		if( s == ')'){
-			 printf("<symbol> %c </symbol>\n",s);
+			printf("<symbol> %c </symbol>\n",s);
 			return;
 		}
 		else {
-			 printf("<ExpressionList>\n");
+			printf("<ExpressionList>\n");
 			compileExp();
 			advance();
 			t = tokenType();
@@ -221,7 +214,7 @@ void compileExplist(){
 				char s = symbol();
 				if( s == ',') {
 					while(s == ',') {
-						 printf("<symbol> %c </symbol>\n",s);
+						printf("<symbol> %c </symbol>\n",s);
 						compileExp();
 						advance();
 						t = tokenType();
@@ -232,11 +225,11 @@ void compileExplist(){
 					}
 				}
 			}
-			 printf("</ExpressionList>\n");
+			printf("</ExpressionList>\n");
 		}
 	}
 	else {
-		 printf("<ExpressionList>\n");
+		printf("<ExpressionList>\n");
 		compileExp();
 		advance();
 		t = tokenType();
@@ -244,7 +237,7 @@ void compileExplist(){
 			char s = symbol();
 			if( s == ',') {
 				while(s == ',') {
-					 printf("<symbol> %c </symbol>\n",s);
+					printf("<symbol> %c </symbol>\n",s);
 					compileExp();
 					advance();
 					t = tokenType();
@@ -255,6 +248,6 @@ void compileExplist(){
 				}
 			}
 		}
-		 printf("</ExpressionList>\n");
+		printf("</ExpressionList>\n");
 	}
 }

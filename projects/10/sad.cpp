@@ -4,13 +4,8 @@ void readcom(string ar){
 	jackf= fopen(ar.c_str(),"r");
 	lineno = 0;
 	lookahead = 0;
-	lexeme = "";
-	curtok = "";
-//	while(1){
-//		advance();
-//		if(!hasMoreTokens())
-//			break;
-//	}
+	toks[0] = "";
+	toks[1] = "";
 	compileExp();
 	fclose(jackf);
 }
