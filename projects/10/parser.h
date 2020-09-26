@@ -1,9 +1,27 @@
 #include"lexer.h"
+//expression
 void compileTerm();
 void compileSubroutine();
 void compileExplist();
 void compileExp();
-
+//statements
+void compileStatements();
+void compileStatement();
+void compileIfstatement();
+void compileWhilestatement();
+void compileDoStatement();
+void compileReturnStatement();
+void compileLetStatement();
+void compileStatement();
+//class
+void compileClass();
+void compileClassVarDec();
+void compileIfstatement();
+void compileWhilestatement();
+void compileDoStatement();
+void compileReturnStatement();
+void compileLetStatement();
+void compileStatement();
 
 char op(){
 	char oper = symbol();
@@ -38,10 +56,9 @@ string kwconst(){
 
 void compileSubroutine(){
 	printf("<Subroutine>\n");
-	printf("<subroutine identifier> %s </subroutine identifier>\n", curtok.c_str());
+	string nm = curtok;
 	advance();
 	string t = tokenType();
-	string nm;
 	char s;
 	if(t == "SYMBOL"){
 		s = symbol();
@@ -58,23 +75,27 @@ void compileSubroutine(){
 			}
 		}
 		else if(s == '.'){
-			advance();
-			nm = identifier();
-			printf("<subroutine identifier> %s </subroutine identifier>\n", nm.c_str());
+			printf("<class identifier> %s </class identifier>\n", nm.c_str());
+			printf("<symbol> %s </symbol>\n",curtok.c_str());
 			advance();
 			t = tokenType();
-
-			if(t == "SYMBOL"){
-				s = symbol();
-				if(s == '('){
-					printf("<symbol> %s </symbol>\n",curtok.c_str());
-					compileExplist();
-					advance();
-					t = tokenType();
-					if( t == "SYMBOL"){
-						s = symbol();
-						if(s == ')'){
-							 printf("</Subroutine>\n");
+			if(t == "IDENTIFIER"){
+				nm = identifier();
+				printf("<subroutine identifier> %s </subroutine identifier>\n", nm.c_str());
+				advance();
+				t = tokenType();
+				if(t == "SYMBOL"){
+					s = symbol();
+					if(s == '('){
+						printf("<symbol> %s </symbol>\n",curtok.c_str());
+						compileExplist();
+						t = tokenType();
+						if( t == "SYMBOL"){
+							s = symbol();
+							if(s == ')'){
+								printf("<symbol> %s </symbol>\n",curtok.c_str());
+								printf("</Subroutine>\n");
+							}
 						}
 					}
 				}
@@ -224,27 +245,4 @@ void compileExplist(){
 		}
 	}
 	printf("</ExpressionList>\n");
-/*	else {
-		 printf("<ExpressionList>\n");
-		compileExp();
-		advance();
-		t = tokenType();
-		if (t == "SYMBOL") {
-			char s = symbol();
-			if( s == ',') {
-				while(s == ',') {
-					 printf("<symbol> %c </symbol>\n",s);
-					compileExp();
-					advance();
-					t = tokenType();
-					if (t == "SYMBOL")
-						s = symbol();
-					else
-						break;
-				}
-			}
-		}
-		 printf("</ExpressionList>\n");
-	}
-*/
 }
