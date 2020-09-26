@@ -53,7 +53,61 @@ string kwconst(){
 	cnst = "";
 	return cnst;
 }
+void compileIfStatement(){
+	printf("<If Statement>\n");
+	advance();
+	printf("<symbol> ( </symbol>\n");	
+	compileExp();
+	char s = symbol();
+	if(s == ')'){
+		advance();
+		printf("<symbol> %c </symbol>\n",s);
+		s = symbol();
+		if(s == '{'){
+			compileStatements();
+			s = symbol();
+			if(s == '}'){
+				advance();
+				printf("<symbol> %c </symbol>\n",s);
+			}
+		}
+	}
+	if(curtok == "else"){
+		advance();
+		s = symbol();
+		printf("<symbol> %c </symbol>\n",s);
+		compileStatements();
+		s = symbol();
+		if(s == '}'){
+			advance();
+			printf("<symbol> %c </symbol>\n",s);
+		}
 
+	}
+	printf("</If Statement>\n");
+}
+
+void compileWhileStatement(){
+	printf("<While Statement>\n");
+	advance();
+	printf("<symbol> ( </symbol>\n");	
+	compileExp();
+	char s = symbol();
+	if(s == ')'){
+		advance();
+		printf("<symbol> %c </symbol>\n",s);
+		s = symbol();
+		if(s == '{'){
+			compileStatements();
+			s = symbol();
+			if(s == '}'){
+				advance();
+				printf("<symbol> %c </symbol>\n",s);
+			}
+		}
+	}
+	printf("</While Statement>\n");
+}
 
 void compileLetStatement(){
 	printf("<Let Statement>\n");
@@ -111,12 +165,12 @@ void compileStatement(){
 	if(curtok == "let"){
 		compileLetStatement();
 	}
-	/*else if(curtok == "if"){
+	else if(curtok == "if"){
 		compileIfStatement();
 	}
 	else if(curtok == "while"){
 		compileWhileStatement();
-	}*/
+	}
 	else if(curtok == "do"){
 		compileDoStatement();
 	}
@@ -126,9 +180,10 @@ void compileStatement(){
 }
 
 void compileStatements(){
-	compileStatement();
+	do{
+		compileStatement();
+	}while(curtok != "}");
 }
-
 void compileSubroutine(){
 	printf("<Subroutine>\n");
 	string nm = curtok;
@@ -303,8 +358,10 @@ void compileExp(){
 void compileExplist(){
 	string t;
 	char s = peek();
-	if(s == ')')
+	if(s == ')'){
+		advance();
 		return;
+	}
 	printf("<ExpressionList>\n");
 	compileExp();
 	s = symbol();
