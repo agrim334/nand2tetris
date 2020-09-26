@@ -11,7 +11,8 @@ void readcom(string ar){
 //		if(!hasMoreTokens())
 //			break;
 //	}
-	compileExp();
+//	compileExp();
+	compileStatements();
 	fclose(jackf);
 }
 

@@ -7,8 +7,8 @@ void compileExp();
 //statements
 void compileStatements();
 void compileStatement();
-void compileIfstatement();
-void compileWhilestatement();
+void compileIfStatement();
+void compileWhileStatement();
 void compileDoStatement();
 void compileReturnStatement();
 void compileLetStatement();
@@ -54,6 +54,81 @@ string kwconst(){
 	return cnst;
 }
 
+
+void compileLetStatement(){
+	printf("<Let Statement>\n");
+	advance();
+	string nm = identifier();
+	printf("<VarName > %s </VarName>\n", nm.c_str());
+	advance();
+	char s;
+	if(curtok == "["){
+		printf("<symbol> [ </symbol>\n");	
+		compileExp();
+		s = symbol();
+		if(s == ']'){
+			advance();
+			printf("<symbol> %c </symbol>\n",s);
+		}
+	}
+	if(curtok == "="){
+		compileExp();
+		s = symbol();
+		if(s == ';'){
+			printf("<symbol> ; </symbol>\n");	
+			printf("</Let Statement>\n");
+		}
+	}
+}
+
+void compileDoStatement(){
+	printf("<Do Statement>\n");
+	advance();
+	compileSubroutine();
+	char s = symbol();
+	if(s == ';'){
+		printf("<symbol> ; </symbol>\n");	
+		printf("</Do Statement>\n");
+	}
+}
+
+void compileReturnStatement(){
+	printf("<Return Statement>\n");
+	char s = symbol();
+	if(s != ';'){
+		compileExp();
+		s = symbol();
+		if (s == ';')
+			printf("<symbol> ; </symbol>\n");
+	}
+	else
+		printf("<symbol> ; </symbol>\n");
+	printf("</Return Statement>\n");
+}
+
+void compileStatement(){
+	advance();
+	if(curtok == "let"){
+		compileLetStatement();
+	}
+	/*else if(curtok == "if"){
+		compileIfStatement();
+	}
+	else if(curtok == "while"){
+		compileWhileStatement();
+	}*/
+	else if(curtok == "do"){
+		compileDoStatement();
+	}
+	else if(curtok == "return"){
+		compileReturnStatement();
+	}
+}
+
+void compileStatements(){
+	compileStatement();
+}
+
 void compileSubroutine(){
 	printf("<Subroutine>\n");
 	string nm = curtok;
@@ -63,6 +138,7 @@ void compileSubroutine(){
 	if(t == "SYMBOL"){
 		s = symbol();
 		if(s == '('){
+			printf("<subroutine identifier> %s </subroutine identifier>\n", nm.c_str());
 			printf("<symbol> %s </symbol>\n",curtok.c_str());
 			compileExplist();
 			t = tokenType();
@@ -138,7 +214,7 @@ void compileTerm_(){
 		}
 	}
 	else{
-		printf("<Term>\n");
+		printf("</Term>\n");
 		printf("<identifier> %s </identifier>\n",curtok.c_str());
 
 	}
@@ -174,8 +250,9 @@ void compileTerm(){
 	else if( t == "SYMBOL"){
 		s = symbol();
 		if(s == '('){
-			 printf("<Term>\n");
-			 printf("<symbol> %c </symbol>\n",s);
+
+			printf("<Term>\n");
+			printf("<symbol> %c </symbol>\n",s);
 			compileExp();
 			advance();
 			t = tokenType();
@@ -184,18 +261,17 @@ void compileTerm(){
 				if( s == ')'){
 					 printf("<symbol> %c </symbol>\n",s);
 				}
-			
+			}
 		}
 		else{
 			s = unaryop();
 			if(s){
-				 printf("<Term>\n");
-				 printf("<symbol> %c </symbol>\n",s);
+				printf("<Term>\n");
+				printf("<symbol> %c </symbol>\n",s);
 				compileTerm();
 				}
-			}
-			
 		}
+
 	}
 	 printf("</Term>\n");
 }
@@ -231,12 +307,12 @@ void compileExplist(){
 		return;
 	printf("<ExpressionList>\n");
 	compileExp();
-	s = peek();
+	s = symbol();
 	if( s == ',') {
 		while(s == ',') {
 			printf("<symbol> %c </symbol>\n",s);
 			compileExp();
-			advance();
+//			advance();
 			t = tokenType();
 			if (t == "SYMBOL")
 				s = symbol();
