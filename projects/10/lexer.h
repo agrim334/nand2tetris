@@ -86,7 +86,7 @@ char peek(){
 	return i<lexeme.length()?lexeme.at(i):'\0';
 }
 void advance(){
-	if(lexeme == ""){
+	while(lexeme == "" || lexeme.length() == 0){
 		if(!hasMoreTokens())
 			return;
 		while(curline[lookahead] == '\n' || curline[lookahead] == '\0' || curline[lookahead] == '\r'){
@@ -99,12 +99,13 @@ void advance(){
 			whitespace(curline);
 			comments(curline);
 			lineno++;
-			}
-
+		}
+		lexeme = "";
 		whitespace(curline);
 		comments(curline);
+//		printf("lookahead old %d ",lookahead);
 
-		while(lexeme.length() == 0 || curline[lookahead] != '\n' && curline[lookahead] != ' ' && curline[lookahead] != '\r' && curline[lookahead] != '\v' && curline[lookahead] != '\t'){
+		while(curline[lookahead] != '\n' && curline[lookahead] != ' ' && curline[lookahead] != '\r' && curline[lookahead] != '\v' && curline[lookahead] != '\t'){
 			if(curline[lookahead] == '\"'){
 				lexeme += curline[lookahead];
 				lookahead++;
@@ -122,11 +123,13 @@ void advance(){
 				lookahead++;
 			}
 		}
+//		printf("lookahead %d %s lexeme length %lu\n",lookahead,lexeme.c_str(),lexeme.length());
 	}
+
 	int i = 0;
 	curtok = "";
 
-	if(i < lexeme.length() && (lexeme.at(i) >= '0' && lexeme.at(i) <= '9')){
+	if(lexeme.length() && (lexeme.at(i) >= '0' && lexeme.at(i) <= '9')){
 		while(i < lexeme.length() && (lexeme.at(i) >= '0' && lexeme.at(i) <= '9')) {
 			curtok += lexeme.at(i); 
 			i++;
@@ -141,7 +144,7 @@ void advance(){
 			lexeme.erase(lexeme.begin(),lexeme.begin()+i);
 
 	}
-	else if(i < lexeme.length() && ((lexeme.at(i) >= 'a' && lexeme.at(i) <= 'z') || (lexeme.at(i) >= 'A' && lexeme.at(i) <= 'Z') || lexeme.at(i) == '_')){
+	else if(lexeme.length() && ((lexeme.at(i) >= 'a' && lexeme.at(i) <= 'z') || (lexeme.at(i) >= 'A' && lexeme.at(i) <= 'Z') || lexeme.at(i) == '_')){
 		while(i < lexeme.length() && ((lexeme.at(i) >= 'a' && lexeme.at(i) <= 'z') || (lexeme.at(i) >= 'A' && lexeme.at(i) <= 'Z') || lexeme.at(i) == '_')){
 			curtok += lexeme.at(i);
 			i++;
@@ -190,7 +193,6 @@ void advance(){
 			}
 		}
 	}
-//	printf("%s\n",curtok.c_str());
 }
 
 string keyword(){

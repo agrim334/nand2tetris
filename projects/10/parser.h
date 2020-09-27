@@ -114,7 +114,6 @@ void compileSubroutine(){
 	}
 }
 
-
 void compileTerm_(){
 	string t;
 	t = tokenType();
@@ -353,6 +352,7 @@ void compileDoStatement(){
 
 void compileReturnStatement(){
 	printf("<Return Statement>\n");
+	advance();
 	char s = symbol();
 	if(s != ';'){
 		compileExp();

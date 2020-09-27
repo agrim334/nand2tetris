@@ -6,12 +6,6 @@ void readcom(string ar){
 	lookahead = 0;
 	lexeme = "";
 	curtok = "";
-//	while(1){
-//		advance();
-//		if(!hasMoreTokens())
-//			break;
-//	}
-//	compileExp();
 	advance();
 	compileClass();
 	fclose(jackf);
