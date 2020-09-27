@@ -12,7 +12,8 @@ void readcom(string ar){
 //			break;
 //	}
 //	compileExp();
-	compileStatements();
+	advance();
+	compileClass();
 	fclose(jackf);
 }
 

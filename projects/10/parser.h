@@ -385,42 +385,10 @@ void compileStatement(){
 }
 
 void compileStatements(){
-	do{
+	printf("<Statements>\n");
+	while(curtok != "}")
 		compileStatement();
-	}while(curtok != "}");
-}
-
-void compileClassVarDec(){
-	printf("<ClassVarDeclaration>\n");
-	advance();
-	if(curtok == "static" || curtok == "field"){
-		printf("<ClassVarScope> %s </ClassVarScope>\n",curtok.c_str());
-		advance();
-	}
-	string t = type();
-	printf("<ClassVarType> %s </ClassVarType>\n",t.c_str());
-	advance();
-	string vn = identifier();
-	printf("<ClassVarNameDeclared> %s </ClassVarNameDeclared>\n",vn.c_str());
-	advance();
-	char s = symbol();
-	if( s == ',') {
-		while(s == ',') {
-			printf("<symbol> %c </symbol>\n",s);
-			vn = identifier();
-			printf("<ClassVarNameDeclared> %s </ClassVarNameDeclared>\n",vn.c_str());
-//			advance();
-			t = tokenType();
-			if (t == "SYMBOL")
-				s = symbol();
-			else
-				break;
-		}
-	}
-	s = symbol();
-	if (s == ';')
-		printf("<symbol> ; </symbol>\n");
-	printf("</ClassVarDeclaration>\n");
+	printf("</Statements>\n");
 }
 
 void compileVarDec(){
@@ -463,7 +431,11 @@ void compileSubroutineBody(){
 		advance();
 	}
 	compileStatements();
-	printf("</SubroutineBody>\n");
+	s = symbol();
+	if(s == '}'){
+		printf("<symbol> %c </symbol>\n",s);
+		printf("</SubroutineBody>\n");
+	}
 }
 
 void compileParameterlist(){
@@ -499,16 +471,15 @@ void compileParameterlist(){
 				break;
 		}
 	}
-	printf("</ParameterList>\n");
+	if(s == ')'){
+		printf("<symbol> %c </symbol>\n",s);
+		printf("</ParameterList>\n");
+	}
 }
 
 void compileSubroutineHead(){
-	advance();
 	printf("<Subroutine Declaration>\n");
-	if(curtok == "constructor" || curtok == "function" || curtok == "method"){
-		printf("<SubroutineType> %s </SubroutineType>\n",curtok.c_str());
-		advance();
-	}
+	printf("<SubroutineType> %s </SubroutineType>\n",curtok.c_str());
 	advance();
 	string t;
 	if(curtok == "void")
@@ -532,25 +503,64 @@ void compileSubroutineHead(){
 			}
 		}
 		compileSubroutineBody();
-	}
 	printf("</Subroutine Declaration>\n");
+	}
+}
+
+void compileClassVarDec(){
+	printf("<ClassVarDeclaration>\n");
+	printf("<ClassVarScope> %s </ClassVarScope>\n",curtok.c_str());
+	advance();
+	string t = type();
+	printf("<ClassVarType> %s </ClassVarType>\n",t.c_str());
+	advance();
+	string vn = identifier();
+	printf("<ClassVarNameDeclared> %s </ClassVarNameDeclared>\n",vn.c_str());
+	advance();
+	char s = symbol();
+	if( s == ',') {
+		while(s == ',') {
+			printf("<symbol> %c </symbol>\n",s);
+			vn = identifier();
+			printf("<ClassVarNameDeclared> %s </ClassVarNameDeclared>\n",vn.c_str());
+//			advance();
+			t = tokenType();
+			if (t == "SYMBOL")
+				s = symbol();
+			else
+				break;
+		}
+		s = symbol();
+	}
+	if (s == ';'){
+		printf("<symbol> ; </symbol>\n");
+		printf("</ClassVarDeclaration>\n");
+	}
 }
 
 void compileClass(){
 	advance();
 	printf("<Class Declaration>\n");
 	string cn = identifier();
+	string t;
 	printf("<ClassName> %s </ClassName>\n",cn.c_str());
 	advance();
 	char s = symbol();
 	if(s == '{'){
 		printf("<symbol> %c </symbol>\n",s);
-		do{
+		advance();
+		while(curtok == "static" || curtok == "field"){
 			compileClassVarDec();
-		}while(curtok != ";");
-		do{
+			advance();
+		}
+		while(curtok == "constructor" || curtok == "method" || curtok == "function"){
 			compileSubroutineHead();
-		}while(curtok != ";");
+			advance();
+		}
+		s = symbol();
+		if(s == '}'){
+			printf("<symbol> %c </symbol>\n",s);
+			printf("</Class Declaration>\n");
+		}
 	}
-	printf("</Class Declaration>\n");
 }
