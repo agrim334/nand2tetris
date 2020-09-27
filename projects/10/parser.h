@@ -64,7 +64,6 @@ string type(){
 }
 
 void compileSubroutine(){
-	printf("<Subroutine>\n");
 	string nm = curtok;
 	advance();
 	string t = tokenType();
@@ -72,7 +71,7 @@ void compileSubroutine(){
 	if(t == "SYMBOL"){
 		s = symbol();
 		if(s == '('){
-			printf("<subroutine identifier> %s </subroutine identifier>\n", nm.c_str());
+			printf("<identifier> %s </identifier>\n", nm.c_str());
 			printf("<symbol> %s </symbol>\n",curtok.c_str());
 			compileExplist();
 			t = tokenType();
@@ -80,18 +79,17 @@ void compileSubroutine(){
 				s = symbol();
 				if(s == ')'){
 					printf("<symbol> %s </symbol>\n",curtok.c_str());
-					printf("</Subroutine>\n");
 				}
 			}
 		}
 		else if(s == '.'){
-			printf("<class identifier> %s </class identifier>\n", nm.c_str());
+			printf("<identifier> %s </identifier>\n", nm.c_str());
 			printf("<symbol> %s </symbol>\n",curtok.c_str());
 			advance();
 			t = tokenType();
 			if(t == "IDENTIFIER"){
 				nm = identifier();
-				printf("<subroutine identifier> %s </subroutine identifier>\n", nm.c_str());
+				printf("<identifier> %s </identifier>\n", nm.c_str());
 				advance();
 				t = tokenType();
 				if(t == "SYMBOL"){
@@ -104,7 +102,6 @@ void compileSubroutine(){
 							s = symbol();
 							if(s == ')'){
 								printf("<symbol> %s </symbol>\n",curtok.c_str());
-								printf("</Subroutine>\n");
 							}
 						}
 					}
@@ -120,7 +117,6 @@ void compileTerm_(){
 	char s = peek();
 	int i;
 	if(s == '(' || s == '.' ){
-		printf("<Term>\n");
 		compileSubroutine();
 		t = tokenType();
 		if(t == "SYMBOL" ){
@@ -132,7 +128,6 @@ void compileTerm_(){
 		}
 	}
 	else if(s == '['){
-		printf("<Term>\n");
 		printf("<identifier> %s </identifier>\n",curtok.c_str());
 		advance();
 		printf("<symbol> %s </symbol>\n",curtok.c_str());
@@ -147,7 +142,6 @@ void compileTerm_(){
 		}
 	}
 	else{
-		printf("</Term>\n");
 		printf("<identifier> %s </identifier>\n",curtok.c_str());
 	}
 }
@@ -159,21 +153,19 @@ void compileTerm(){
 	string x;
 	int y;
 	char s;
+	printf("<term>\n");
+
 	if(t == "INT_CONST"){
 		y = intconstant();
-		 printf("<Term>\n");
-		 printf("<integer> %d  </integer>\n",y);
-		
+		printf("<integerConstant> %d  </integerConstant>\n",y);		
 	}
 	else if( t == "STRING_CONST"){
 		x = stringconstant();
-		 printf("<Term>\n");
-		 printf("<string> %s  </string>\n",x.c_str());
+		printf("<stringConstant> %s  </stringConstant>\n",x.c_str());
 	}
 	else if( t == "KEYWORD"){
 		x = kwconst();
-		 printf("<Term>\n");
-		 printf("<keywordconst> %s </keywordconst>\n",x.c_str());
+		printf("<keyword> %s </keyword>\n",x.c_str());
 	}
 	else if( t == "IDENTIFIER"){
 		x = identifier();
@@ -182,8 +174,6 @@ void compileTerm(){
 	else if( t == "SYMBOL"){
 		s = symbol();
 		if(s == '('){
-
-			printf("<Term>\n");
 			printf("<symbol> %c </symbol>\n",s);
 			compileExp();
 			advance();
@@ -198,71 +188,70 @@ void compileTerm(){
 		else{
 			s = unaryop();
 			if(s){
-				printf("<Term>\n");
 				printf("<symbol> %c </symbol>\n",s);
 				compileTerm();
-				}
+			}
 		}
 
 	}
-	 printf("</Term>\n");
+	 printf("</term>\n");
 }
 
 void compileExp(){
-	printf("<Expression>\n");
+	printf("<expression>\n");
 	compileTerm();
 	advance();
 	string t = tokenType();
 
 	if (t == "SYMBOL") {
 		char s = op();
-		if(s){
-			while(s){
-				printf("<symbol> %c </symbol>\n",s);
-				compileTerm();
-				advance();
-				t = tokenType();
-				if (t == "SYMBOL")
-					s = op();
-				else
-					break;
-			}
-		}
-	}
-	 printf("</Expression>\n");
-}
-
-void compileExplist(){
-	string t;
-	char s = peek();
-	if(s == ')'){
-		advance();
-		return;
-	}
-	printf("<ExpressionList>\n");
-	compileExp();
-	s = symbol();
-	if( s == ',') {
-		while(s == ',') {
-			printf("<symbol> %c </symbol>\n",s);
-			compileExp();
-//			advance();
+		while(s){
+			compileTerm();
+			advance();
 			t = tokenType();
 			if (t == "SYMBOL")
-				s = symbol();
+				s = op();
 			else
 				break;
 		}
 	}
-	printf("</ExpressionList>\n");
+	printf("</expression>\n");
+}
+
+void compileExplist(){
+	char s = symbol();
+	printf("<expressionList>\n");
+	printf("<symbol> %c </symbol>\n",s);
+	string t;
+	s = peek();
+	if(s == ')'){
+		advance();
+		printf("<symbol> %c </symbol>\n",s);
+		printf("</expressionList>\n");
+		return;
+	}
+	compileExp();
+	s = symbol();
+	while(s == ',') {
+		compileExp();
+//		advance();
+		t = tokenType();
+		if (t == "SYMBOL")
+			s = symbol();
+		else
+			break;
+	}
+	printf("<symbol> %c </symbol>\n",s);
+	printf("</expressionList>\n");
 }
 
 void compileIfStatement(){
-	printf("<If Statement>\n");
+	printf("<ifStatement>\n");
 	advance();
-	printf("<symbol> ( </symbol>\n");	
-	compileExp();
 	char s = symbol();
+	printf("<symbol> %c </symbol>\n",s);	
+	compileExp();
+	s = symbol();
 	if(s == ')'){
 		advance();
 		printf("<symbol> %c </symbol>\n",s);
@@ -288,15 +277,16 @@ void compileIfStatement(){
 		}
 
 	}
-	printf("</If Statement>\n");
+	printf("</ifStatement>\n");
 }
 
 void compileWhileStatement(){
-	printf("<While Statement>\n");
+	printf("<whileStatement>\n");
 	advance();
-	printf("<symbol> ( </symbol>\n");	
-	compileExp();
 	char s = symbol();
+	printf("<symbol> %c </symbol>\n",s);	
+	compileExp();
+	s = symbol();
 	if(s == ')'){
 		advance();
 		printf("<symbol> %c </symbol>\n",s);
@@ -310,11 +300,11 @@ void compileWhileStatement(){
 			}
 		}
 	}
-	printf("</While Statement>\n");
+	printf("</whileStatement>\n");
 }
 
 void compileLetStatement(){
-	printf("<Let Statement>\n");
+	printf("<letStatement>\n");
 	advance();
 	string nm = identifier();
 	printf("<VarName > %s </VarName>\n", nm.c_str());
@@ -334,35 +324,36 @@ void compileLetStatement(){
 		s = symbol();
 		if(s == ';'){
 			printf("<symbol> ; </symbol>\n");	
-			printf("</Let Statement>\n");
+			printf("</letStatement>\n");
 		}
 	}
 }
 
 void compileDoStatement(){
-	printf("<Do Statement>\n");
+	printf("<doStatement>\n");
 	advance();
 	compileSubroutine();
 	char s = symbol();
 	if(s == ';'){
 		printf("<symbol> ; </symbol>\n");	
-		printf("</Do Statement>\n");
+		printf("</doStatement>\n");
 	}
 }
 
 void compileReturnStatement(){
-	printf("<Return Statement>\n");
+	printf("<returnStatement>\n");
 	advance();
-	char s = symbol();
+	char s = peek();
 	if(s != ';'){
 		compileExp();
 		s = symbol();
 		if (s == ';')
 			printf("<symbol> ; </symbol>\n");
 	}
-	else
+	else{
 		printf("<symbol> ; </symbol>\n");
-	printf("</Return Statement>\n");
+	}
+	printf("</returnStatement>\n");
 }
 
 void compileStatement(){
@@ -385,43 +376,45 @@ void compileStatement(){
 }
 
 void compileStatements(){
-	printf("<Statements>\n");
+	printf("<statements>\n");
 	while(curtok != "}")
 		compileStatement();
-	printf("</Statements>\n");
+	printf("</statements>\n");
 }
 
 void compileVarDec(){
-	printf("<VarDeclaration>\n");
+	printf("<varDec>\n");
 	advance();
 	string t = type();
-	printf("<VarType> %s </VarType>\n",t.c_str());
+	string tokt = tokenType();
+	if(tokt == "IDENTIFIER")
+		printf("<identifier> %s </identifier>\n",t.c_str());
+	else
+		printf("<keyword> %s </keyword>\n",t.c_str());
 	advance();
 	string vn = identifier();
-	printf("<VarNameDeclared> %s </VarNameDeclared>\n",vn.c_str());
+	printf("<identifier> %s </identifier>\n",vn.c_str());
 	advance();
 	char s = symbol();
-	if( s == ',') {
-		while(s == ',') {
-			printf("<symbol> %c </symbol>\n",s);
-			vn = identifier();
-			printf("<VarNameDeclared> %s </VarNameDeclared>\n",vn.c_str());
-//			advance();
-			t = tokenType();
-			if (t == "SYMBOL")
-				s = symbol();
-			else
-				break;
-		}
+	while(s == ',') {
+		advance();
+		vn = identifier();
+		printf("<identifier> %s </identifier>\n",vn.c_str());
+		advance();
+		t = tokenType();
+		if (t == "SYMBOL")
+			s = symbol();
+		else
+			break;
 	}
-	s = symbol();
-	if (s == ';')
+	if(s == ';'){
 		printf("<symbol> ; </symbol>\n");
-	printf("</VarDeclaration>\n");
+		printf("</varDec>\n");
+	}
 }
 
 void compileSubroutineBody(){
-	printf("<SubroutineBody>\n");
+	printf("<subroutineBody>\n");
 	advance();
 	char s = symbol();
 	printf("<symbol> %c </symbol>\n",s);
@@ -434,110 +427,119 @@ void compileSubroutineBody(){
 	s = symbol();
 	if(s == '}'){
 		printf("<symbol> %c </symbol>\n",s);
-		printf("</SubroutineBody>\n");
+		printf("</subroutineBody>\n");
 	}
 }
 
 void compileParameterlist(){
+	printf("<parameterList>\n");
+	printf("<symbol> %s </symbol>\n",curtok.c_str());
 	string t;
 	char s = peek();
 	if(s == ')'){
 		advance();
+		printf("</parameterList>\n");
+		printf("<symbol> %c </symbol>\n",s);
 		return;
 	}
 	advance();
-	printf("<ParameterList>\n");
 	t = type();
-	printf("<ParaVarType> %s </ParaVarType>\n",t.c_str());
+	string tokt = tokenType();
+	if(tokt == "IDENTIFIER")
+		printf("<identifier> %s </identifier>\n",t.c_str());
+	else
+		printf("<keyword> %s </keyword>\n",t.c_str());
 	advance();
 	string vn = identifier();
-	printf("<ParaVarNameDeclared> %s </ParaVarNameDeclared>\n",vn.c_str());
+	printf("<identifier> %s </identifier>\n",vn.c_str());
 	advance();
 	s = symbol();
-	if( s == ',') {
-		while(s == ',') {
-			printf("<symbol> %c </symbol>\n",s);
-			advance();
-			t = type();
-			printf("<ParaVarType> %s </ParaVarType>\n",t.c_str());
-			advance();
-			string vn = identifier();
-			printf("<ParaVarNameDeclared> %s </ParaVarNameDeclared>\n",vn.c_str());
-			advance();
-			t = tokenType();
-			if (t == "SYMBOL")
-				s = symbol();
-			else
-				break;
-		}
+	while(s == ',') {
+		advance();
+		t = type();
+		tokt = tokenType();
+		if(tokt == "IDENTIFIER")
+			printf("<identifier> %s </identifier>\n",t.c_str());
+		else
+			printf("<keyword> %s </keyword>\n",t.c_str());
+		advance();
+		vn = identifier();
+		printf("<identifier> %s </identifier>\n",vn.c_str());
+		advance();
+		t = tokenType();
+		if (t == "SYMBOL")
+			s = symbol();
+		else
+			break;
 	}
 	if(s == ')'){
 		printf("<symbol> %c </symbol>\n",s);
-		printf("</ParameterList>\n");
+		printf("</parameterList>\n");
 	}
 }
 
 void compileSubroutineHead(){
-	printf("<Subroutine Declaration>\n");
-	printf("<SubroutineType> %s </SubroutineType>\n",curtok.c_str());
+	printf("<subroutineDec>\n");
+	printf("<keyword> %s </keyword>\n",curtok.c_str());
 	advance();
 	string t;
 	if(curtok == "void")
 		t = curtok;
 	else
 		t = type();
-	printf("<SubroutineReturnType> %s </SubroutineReturnType>\n",t.c_str());
+	string tokt = tokenType();
+	if(tokt == "IDENTIFIER")
+		printf("<identifier> %s </identifier>\n",t.c_str());
+	else
+		printf("<keyword> %s </keyword>\n",t.c_str());
 	advance();
 	string sbn = identifier();
-	printf("<SubroutineName> %s </SubroutineName>\n",sbn.c_str());	
+	printf("<identifier> %s </identifier>\n",sbn.c_str());	
 	advance();
 	char s = symbol();
 	if(s == '('){
-		printf("<symbol> %c </symbol>\n",s);
 		compileParameterlist();
-		t = tokenType();
-		if( t == "SYMBOL"){
-			s = symbol();
-			if(s == ')'){
-				printf("<symbol> %s </symbol>\n",curtok.c_str());
-			}
-		}
 		compileSubroutineBody();
-	printf("</Subroutine Declaration>\n");
+		printf("</subroutineDec>\n");
 	}
 }
 
 void compileClassVarDec(){
-	printf("<ClassVarDeclaration>\n");
-	printf("<ClassVarScope> %s </ClassVarScope>\n",curtok.c_str());
+	printf("<classVarDec>\n");
+	printf("<keyword> %s </keyword>\n",curtok.c_str());
 	advance();
 	string t = type();
-	printf("<ClassVarType> %s </ClassVarType>\n",t.c_str());
+	string tokt = tokenType();
+	if(tokt == "IDENTIFIER")
+		printf("<identifier> %s </identifier>\n",t.c_str());
+	else
+		printf("<keyword> %s </keyword>\n",t.c_str());
+
 	advance();
 	string vn = identifier();
-	printf("<ClassVarNameDeclared> %s </ClassVarNameDeclared>\n",vn.c_str());
+	printf("<identifier> %s </identifier>\n",vn.c_str());
 	advance();
 	char s = symbol();
 	while(s == ',') {
-		printf("<symbol> %c </symbol>\n",s);
 		advance();
 		vn = identifier();
-		printf("<ClassVarNameDeclared> %s </ClassVarNameDeclared>\n",vn.c_str());
+		printf("<identifier> %s </identifier>\n",vn.c_str());
 		advance();
 		s = symbol();
 	}
 	if (s == ';'){
 		printf("<symbol> ; </symbol>\n");
-		printf("</ClassVarDeclaration>\n");
+		printf("</classVarDec>\n");
 	}
 }
 
 void compileClass(){
+	printf("<class>\n");
+	printf("<keyword> %s </keyword>\n",curtok.c_str());
 	advance();
-	printf("<Class Declaration>\n");
 	string cn = identifier();
 	string t;
-	printf("<ClassName> %s </ClassName>\n",cn.c_str());
+	printf("<identifier> %s </identifier>\n",cn.c_str());
 	advance();
 	char s = symbol();
 	if(s == '{'){
@@ -554,7 +556,7 @@ void compileClass(){
 		s = symbol();
 		if(s == '}'){
 			printf("<symbol> %c </symbol>\n",s);
-			printf("</Class Declaration>\n");
+			printf("</class>\n");
 		}
 	}
 }

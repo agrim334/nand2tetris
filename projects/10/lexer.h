@@ -16,6 +16,10 @@ int lineno = 0;
 string curtok;
 string lexeme;
 
+bool hasMoreTokens(){
+	return !feof(jackf)?true:false;
+}
+
 void whitespace(char ar[] ){
 	while(ar[lookahead]==' ' || ar[lookahead]=='\t' || ar[lookahead]=='\r' || ar[lookahead]=='\v'){
 		lookahead = lookahead+1;
@@ -31,13 +35,18 @@ void comments(char ar[] ){
 		else if(ar[lookahead+1] == '*'){
 			while(ar[lookahead] != '*' || ar[lookahead+1]!='/'){
 				lookahead = lookahead+1;
+				if(lookahead == 255){
+					if(hasMoreTokens()){
+						fgets(curline,255,jackf);
+						lookahead = 0;
+					}
+					else
+						return;
+				}
 			}
 			lookahead = lookahead+2;
 		}
 	}
-}
-bool hasMoreTokens(){
-	return !feof(jackf)?true:false;
 }
 
 string tokenType(){
