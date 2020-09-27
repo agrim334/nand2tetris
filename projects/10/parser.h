@@ -518,18 +518,12 @@ void compileClassVarDec(){
 	printf("<ClassVarNameDeclared> %s </ClassVarNameDeclared>\n",vn.c_str());
 	advance();
 	char s = symbol();
-	if( s == ',') {
-		while(s == ',') {
-			printf("<symbol> %c </symbol>\n",s);
-			vn = identifier();
-			printf("<ClassVarNameDeclared> %s </ClassVarNameDeclared>\n",vn.c_str());
-//			advance();
-			t = tokenType();
-			if (t == "SYMBOL")
-				s = symbol();
-			else
-				break;
-		}
+	while(s == ',') {
+		printf("<symbol> %c </symbol>\n",s);
+		advance();
+		vn = identifier();
+		printf("<ClassVarNameDeclared> %s </ClassVarNameDeclared>\n",vn.c_str());
+		advance();
 		s = symbol();
 	}
 	if (s == ';'){

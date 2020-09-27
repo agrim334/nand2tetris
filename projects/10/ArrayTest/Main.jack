@@ -7,7 +7,9 @@
 
 /** Computes the average of a sequence of integers. */
 class Main {
-    function void main() {
+	field int x,y;
+	static int z;
+    function void main(int a,int b,int c) {
         var Array a;
         var int length;
         var field int i, sum;
