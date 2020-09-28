@@ -1,22 +1,36 @@
 // This file is part of www.nand2tetris.org
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
-// File name: projects/10/ArrayTest/Main.jack
+// File name: projects/10/ExpressionLessSquare/Main.jack
 
-// (identical to projects/09/Average/Main.jack)
+/** Expressionless version of projects/10/Square/Main.jack. */
 
-/** Computes the average of a sequence of integers. */
+class Main {
+    static boolean test;    // Added for testing -- there is no static keyword
+                            // in the Square files.
 
+    function void main() {
+        var SquareGame game;
+        let game = game;
+        do game.run();
+        do game.dispose();
+        return;
+    }
 
-if(a=23) {
-	let x = 42 + func(a+f[23],g(ax));
-	let k = ~23;
-	let b = -6;
-}
-else {
-	while(yadda=234){
-		let z = z + 1;
-		do xs();
-		return efioe[xsa];
-	}
+    function void test() {  // Added to test Jack syntax that is not use in
+        var int i, j;       // the Square files.
+        var String s;
+        var Array a;
+        if (i) {
+            let s = i;
+            let s = j;
+            let a[i] = j;
+        }
+        else {              // There is no else keyword in the Square files.
+            let i = i;
+            let j = j;
+            let i = i | j;
+        }
+        return;
+    }
 }

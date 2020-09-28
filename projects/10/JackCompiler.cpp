@@ -37,7 +37,7 @@ int main(int argc, char* argv[]){
 		}
 		string temp = a2 + ar;
 		string t2;
-//		vmf= fopen(temp.c_str(),"w+");
+		vmf= fopen(temp.c_str(),"w+");
 		int fno=0;
 		if ((dir = opendir (argv[0])) != NULL) {
 			while ((ent = readdir (dir)) != NULL) {
@@ -70,12 +70,12 @@ int main(int argc, char* argv[]){
 	}
 	else {
 		string ar(argv[0]);
-		ar.erase(y-3);
+		ar.erase(y-5);
 		ar += ".xml";
-//		vmf= fopen(ar.c_str(),"w+");
+		vmf= fopen(ar.c_str(),"w+");
 		readcom(argv[0]);
 	}
 	
-//	fclose(vmf);
+	fclose(vmf);
   	return 0;
 }
