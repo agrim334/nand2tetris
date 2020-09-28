@@ -21,6 +21,7 @@ void compileVarDec();
 void compileSubroutineHead();
 void compileParameterlist();
 void compileSubroutineBody();
+int f = 0;
 
 char op(){
 	char oper = symbol();
@@ -106,7 +107,8 @@ void compileTerm_(){
 	t = tokenType();
 	char s = peek();
 	int i;
-	if(s == '(' || s == '.' ){
+
+	if(s == '(' || s == '.'){
 		compileSubroutine();
 		t = tokenType();
 		if(t == "SYMBOL" ){
@@ -167,10 +169,9 @@ void compileTerm(){
 		xmlout ="<keyword>  " + x + " </keyword>\n";
 		fprintf(vmf,"%s",xmlout.c_str());
 	}
-	else if( t == "IDENTIFIER"){
-		x = identifier();
+	else if( t == "IDENTIFIER")
 		compileTerm_();
-	}
+
 	else if( t == "SYMBOL"){
 		s = symbol();
 		if(s == '('){
@@ -289,6 +290,7 @@ void compileElseStatement(){
 	}
 	xmlout ="</ifStatement>\n";
 	fprintf(vmf,"%s",xmlout.c_str());
+	f = 0;
 }
 
 void compileIfStatement(){
@@ -320,6 +322,7 @@ void compileIfStatement(){
 			}
 		}
 	}
+	f = 1;
 }
 
 void compileWhileStatement(){
@@ -353,6 +356,7 @@ void compileWhileStatement(){
 	}
 	xmlout ="</whileStatement>\n";
 	fprintf(vmf,"%s",xmlout.c_str());
+	f = 0;
 }
 
 void compileLetStatement(){
@@ -394,6 +398,7 @@ void compileLetStatement(){
 			fprintf(vmf,"%s",xmlout.c_str());
 		}
 	}
+	f = 0;
 }
 
 void compileDoStatement(){
@@ -413,6 +418,7 @@ void compileDoStatement(){
 		xmlout ="</doStatement>\n";
 		fprintf(vmf,"%s",xmlout.c_str());
 	}
+	f = 0;
 }
 
 void compileReturnStatement(){
@@ -437,9 +443,16 @@ void compileReturnStatement(){
 	}
 	xmlout ="</returnStatement>\n";
 	fprintf(vmf,"%s",xmlout.c_str());
+	f = 0;
 }
 
 void compileStatement(){
+	string xmlout = "";
+	if(f && curtok != "else"){
+		xmlout ="</ifStatement>\n";
+		fprintf(vmf,"%s",xmlout.c_str());
+	}
+	f = 0;
 	if(curtok == "let"){
 		compileLetStatement();
 	}
@@ -675,6 +688,7 @@ void compileClassVarDec(){
 }
 
 void compileClass(){
+	f = 0;
 	string xmlout = "";
 	xmlout ="<class>\n";
 	fprintf(vmf,"%s",xmlout.c_str());
