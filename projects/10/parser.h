@@ -72,15 +72,7 @@ void compileSubroutine(){
 		s = symbol();
 		if(s == '('){
 			printf("<identifier> %s </identifier>\n", nm.c_str());
-			printf("<symbol> %s </symbol>\n",curtok.c_str());
 			compileExplist();
-			t = tokenType();
-			if( t == "SYMBOL"){
-				s = symbol();
-				if(s == ')'){
-					printf("<symbol> %s </symbol>\n",curtok.c_str());
-				}
-			}
 		}
 		else if(s == '.'){
 			printf("<identifier> %s </identifier>\n", nm.c_str());
@@ -94,17 +86,8 @@ void compileSubroutine(){
 				t = tokenType();
 				if(t == "SYMBOL"){
 					s = symbol();
-					if(s == '('){
-						printf("<symbol> %s </symbol>\n",curtok.c_str());
+					if(s == '(')
 						compileExplist();
-						t = tokenType();
-						if( t == "SYMBOL"){
-							s = symbol();
-							if(s == ')'){
-								printf("<symbol> %s </symbol>\n",curtok.c_str());
-							}
-						}
-					}
 				}
 			}
 		}
@@ -220,29 +203,29 @@ void compileExp(){
 
 void compileExplist(){
 	char s = symbol();
-	printf("<expressionList>\n");
 	printf("<symbol> %c </symbol>\n",s);
+	printf("<expressionList>\n");
 	string t;
 	s = peek();
 	if(s == ')'){
 		advance();
-		printf("<symbol> %c </symbol>\n",s);
 		printf("</expressionList>\n");
+		printf("<symbol> %c </symbol>\n",s);
+
 		return;
 	}
 	compileExp();
 	s = symbol();
 	while(s == ',') {
 		compileExp();
-//		advance();
 		t = tokenType();
 		if (t == "SYMBOL")
 			s = symbol();
 		else
 			break;
 	}
-	printf("<symbol> %c </symbol>\n",s);
 	printf("</expressionList>\n");
+	printf("<symbol> %c </symbol>\n",s);
 }
 
 void compileIfStatement(){
@@ -342,7 +325,6 @@ void compileDoStatement(){
 
 void compileReturnStatement(){
 	printf("<returnStatement>\n");
-	advance();
 	char s = peek();
 	if(s != ';'){
 		compileExp();
@@ -357,7 +339,6 @@ void compileReturnStatement(){
 }
 
 void compileStatement(){
-	advance();
 	if(curtok == "let"){
 		compileLetStatement();
 	}
@@ -377,8 +358,10 @@ void compileStatement(){
 
 void compileStatements(){
 	printf("<statements>\n");
-	while(curtok != "}")
+	while(curtok != "}"){
 		compileStatement();
+		advance();
+	}
 	printf("</statements>\n");
 }
 
@@ -432,8 +415,8 @@ void compileSubroutineBody(){
 }
 
 void compileParameterlist(){
-	printf("<parameterList>\n");
 	printf("<symbol> %s </symbol>\n",curtok.c_str());
+	printf("<parameterList>\n");
 	string t;
 	char s = peek();
 	if(s == ')'){
@@ -473,8 +456,8 @@ void compileParameterlist(){
 			break;
 	}
 	if(s == ')'){
-		printf("<symbol> %c </symbol>\n",s);
 		printf("</parameterList>\n");
+		printf("<symbol> %c </symbol>\n",s);
 	}
 }
 
