@@ -21,7 +21,6 @@ void compileVarDec();
 void compileSubroutineHead();
 void compileParameterlist();
 void compileSubroutineBody();
-int f = 0;
 
 char op(){
 	char oper = symbol();
@@ -113,8 +112,6 @@ void compileTerm_(){
 		if(t == "SYMBOL" ){
 			s = symbol();
 			if(s == ')'){
-				xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
-				fprintf(vmf,"%s",xmlout.c_str());
 				return;
 			}
 		}
@@ -275,6 +272,25 @@ void compileExplist(){
 	fprintf(vmf,"%s",xmlout.c_str());
 }
 
+void compileElseStatement(){
+	string xmlout = "";
+	char s;
+	xmlout = "<keyword> " + curtok + " </keyword>\n";
+	fprintf(vmf,"%s",xmlout.c_str());
+	advance();
+	s = symbol();
+	xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
+	fprintf(vmf,"%s",xmlout.c_str());
+	compileStatements();
+	s = symbol();
+	if(s == '}'){
+		xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
+		fprintf(vmf,"%s",xmlout.c_str());
+	}
+	xmlout ="</ifStatement>\n";
+	fprintf(vmf,"%s",xmlout.c_str());
+}
+
 void compileIfStatement(){
 	string xmlout = "";
 	xmlout ="<ifStatement>\n";
@@ -301,28 +317,9 @@ void compileIfStatement(){
 			if(s == '}'){
 				xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
 				fprintf(vmf,"%s",xmlout.c_str());
-				advance();
-				f = 0;
 			}
 		}
 	}
-	if(curtok == "else"){
-		f = 1;
-		xmlout = "<keyword> " + curtok + " </keyword>\n";
-		fprintf(vmf,"%s",xmlout.c_str());
-		advance();
-		s = symbol();
-		xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
-		fprintf(vmf,"%s",xmlout.c_str());
-		compileStatements();
-		s = symbol();
-		if(s == '}'){
-			xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
-			fprintf(vmf,"%s",xmlout.c_str());
-		}
-	}
-	xmlout ="</ifStatement>\n";
-	fprintf(vmf,"%s",xmlout.c_str());
 }
 
 void compileWhileStatement(){
@@ -351,7 +348,6 @@ void compileWhileStatement(){
 			if(s == '}'){
 				xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
 				fprintf(vmf,"%s",xmlout.c_str());
-				f = 1;
 			}
 		}
 	}
@@ -398,7 +394,6 @@ void compileLetStatement(){
 			fprintf(vmf,"%s",xmlout.c_str());
 		}
 	}
-	f = 1;
 }
 
 void compileDoStatement(){
@@ -418,7 +413,6 @@ void compileDoStatement(){
 		xmlout ="</doStatement>\n";
 		fprintf(vmf,"%s",xmlout.c_str());
 	}
-	f = 1;
 }
 
 void compileReturnStatement(){
@@ -441,7 +435,6 @@ void compileReturnStatement(){
 		xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
 		fprintf(vmf,"%s",xmlout.c_str());
 	}
-	f = 1;
 	xmlout ="</returnStatement>\n";
 	fprintf(vmf,"%s",xmlout.c_str());
 }
@@ -452,6 +445,9 @@ void compileStatement(){
 	}
 	else if(curtok == "if"){
 		compileIfStatement();
+	}
+	else if(curtok == "else"){
+		compileElseStatement();
 	}
 	else if(curtok == "while"){
 		compileWhileStatement();
@@ -470,8 +466,7 @@ void compileStatements(){
 	fprintf(vmf,"%s",xmlout.c_str());
 	while(curtok != "}"){
 		compileStatement();
-		if(f)
-			advance();
+		advance();
 	}
 	xmlout ="</statements>\n";
 	fprintf(vmf,"%s",xmlout.c_str());

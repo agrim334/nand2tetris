@@ -2,6 +2,7 @@
 
 void readcom(string ar){
 	jackf= fopen(ar.c_str(),"r");
+	std::fill_n(curline, 255, 0);
 	lineno = 0;
 	lookahead = 0;
 	lexeme = "";
@@ -25,48 +26,26 @@ int main(int argc, char* argv[]){
 		i++;
 
 	if(argv[0][i]!='.') {
-		string a2(argv[0]);
 		string ar(argv[0]);
-		ar += ".xml";
-
-		if(a2.at(a2.length()-1)!='/')
-			a2 += "/";
-		else{
-			ar.erase(y-1);
-			ar += ".xml";
-		}
-		string temp = a2 + ar;
-		string t2;
-		vmf= fopen(temp.c_str(),"w+");
-		int fno=0;
+		if(ar.at(ar.length() - 1) != '/')
+			ar += '/';
+		string temp,t2,t3;
 		if ((dir = opendir (argv[0])) != NULL) {
 			while ((ent = readdir (dir)) != NULL) {
 				int x = strlen(ent -> d_name);
 				if(ent -> d_name[x-5] == '.' && ent -> d_name[x-4] == 'j' && ent -> d_name[x-3] == 'a' && ent -> d_name[x-2] == 'c' && ent -> d_name[x-1] == 'k'){
-					fno++;
+					temp = to_ster(ent -> d_name);
+					t2 = "";
+					t3 = "";
+					t2 = ar + temp;
+					t3 = t2;
+					t3 = t3.erase(t3.length() - 5) + ".xml";
+					vmf= fopen(t3.c_str(),"w+");
+					readcom(t2.c_str());
+					fclose(vmf);
 				}
 			}
 		}
-		closedir(dir);
-		string jackfil[fno];
-		i = 0;
-		if ((dir = opendir (argv[0])) != NULL) {
-			while ((ent = readdir (dir)) != NULL) {
-				int x = strlen(ent -> d_name);
-				if(ent -> d_name[x-5] == '.' && ent -> d_name[x-4] == 'j' && ent -> d_name[x-3] == 'a' && ent -> d_name[x-2] == 'c' && ent -> d_name[x-1] == 'k'){
-					jackfil[i] = to_ster(ent -> d_name);
-					i++;
-				}
-			}
-		}
-		int j;
-		for(j=0;j<fno;j++){
-			fname = jackfil[j];
-			t2 = "";
-			t2 = a2 + fname;
-			readcom(t2.c_str());
-		}
-		closedir(dir);
 	}
 	else {
 		string ar(argv[0]);
@@ -74,8 +53,8 @@ int main(int argc, char* argv[]){
 		ar += ".xml";
 		vmf= fopen(ar.c_str(),"w+");
 		readcom(argv[0]);
+		fclose(vmf);
 	}
 	
-	fclose(vmf);
   	return 0;
 }
