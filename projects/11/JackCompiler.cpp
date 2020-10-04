@@ -9,23 +9,11 @@ void readcom(string ar){
 	curtok = "";
 	pr = "";
 	runno = 0;
+	curfunc = "";
 	advance();
 	compileClass();
 	fclose(jackf);
-	int i;
-	string vnc,vtc,vkc;
-	int r;
-	struct info temp;
-	cout << "Name | " << "Type |" << "Kind |" << "#\n"; 
-
-	for(auto i = sym_tab.begin(); i!= sym_tab.end();i++){
-		vnc = i->first;
-		temp = i -> second;
-		r = temp.runno;
-		vtc = temp.vtype;
-		vkc = temp.vkind;
-		cout <<  vnc << " | " << vtc << " | " << vkc << " | " << r << "\n"; 
-	}
+//	dispTable();
 }
 
 string to_ster(char* ar){

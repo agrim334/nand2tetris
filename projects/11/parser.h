@@ -1,5 +1,5 @@
 #include"lexer.h"
-#include"codewriter.h"
+#include"SymbolTable.h"
 #include <algorithm>
 //expression
 void compileTerm();
@@ -26,6 +26,7 @@ void compileSubroutineBody();
 string pr;
 int f = 0;
 int runno = 0;
+string curfunc;
 
 char op(){
 	char oper = symbol();
@@ -182,7 +183,6 @@ void compileTerm(){
 			xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
 			fprintf(vmf,"%s",xmlout.c_str());
 			compileExp();
-	//		advance();
 			t = tokenType();
 			if (t == "SYMBOL"){
 				s = symbol();
@@ -520,8 +520,8 @@ void compileVarDec(){
 	xmlout ="<identifier> "  + vn + " </identifier>\n";
 	fprintf(vmf,"%s",xmlout.c_str());
 	advance();
-	if(!contains(vn,tokt,vkind,runno)){
-		addEntry(vn,tokt,vkind,runno);
+	if(!contains(curfunc,vn,tokt,vkind,runno)){
+		addEntry(curfunc,vn,tokt,vkind,runno);
 		runno++;
 	}
 
@@ -535,8 +535,8 @@ void compileVarDec(){
 		fprintf(vmf,"%s",xmlout.c_str());
 		advance();
 
-		if(!contains(vn,tokt,vkind,runno)){
-			addEntry(vn,tokt,vkind,runno);
+		if(!contains(curfunc,vn,tokt,vkind,runno)){
+			addEntry(curfunc,vn,tokt,vkind,runno);
 			runno++;
 		}
 
@@ -618,8 +618,8 @@ void compileParameterlist(){
 	xmlout ="<identifier> "  + vn + " </identifier>\n";
 	fprintf(vmf,"%s",xmlout.c_str());
 
-	if(!contains(vn,t,vkind,runno)){
-		addEntry(vn,t,vkind,runno);
+	if(!contains(curfunc,vn,t,vkind,runno)){
+		addEntry(curfunc,vn,t,vkind,runno);
 		runno++;
 	}
 
@@ -642,8 +642,8 @@ void compileParameterlist(){
 		xmlout ="<identifier> "  + vn + " </identifier>\n";
 		fprintf(vmf,"%s",xmlout.c_str());
 		advance();
-		if(!contains(vn,t,vkind,runno)){
-			addEntry(vn,t,vkind,runno);
+		if(!contains(curfunc,vn,t,vkind,runno)){
+			addEntry(curfunc,vn,t,vkind,runno);
 			runno++;
 		}
 		t = tokenType();
@@ -685,6 +685,7 @@ void compileSubroutineHead(){
 	advance();
 	string sbn = identifier();
 	xmlout ="<identifier> "  + sbn + " </identifier>\n";	
+	curfunc = sbn;
 	fprintf(vmf,"%s",xmlout.c_str());
 	advance();
 	char s = symbol();
@@ -707,7 +708,6 @@ void compileClassVarDec(){
 		runno = 0;
 	}
 	
-
 	xmlout ="<classVarDec>\n";
 	fprintf(vmf,"%s",xmlout.c_str());
 
@@ -729,8 +729,8 @@ void compileClassVarDec(){
 	string vn = identifier();
 	xmlout ="<identifier> "  + vn + " </identifier>\n";
 
-	if(!contains(vn,t,vkind,runno)){
-		addEntry(vn,t,vkind,runno);
+	if(!contains(curfunc,vn,t,vkind,runno)){
+		addEntry(curfunc,vn,t,vkind,runno);
 		runno++;
 	}
 
@@ -745,8 +745,8 @@ void compileClassVarDec(){
 		xmlout ="<identifier> "  + vn + " </identifier>\n";
 		fprintf(vmf,"%s",xmlout.c_str());
 
-		if(!contains(vn,t,vkind,runno)){
-			addEntry(vn,t,vkind,runno);
+		if(!contains(curfunc,vn,t,vkind,runno)){
+			addEntry(curfunc,vn,t,vkind,runno);
 			runno++;
 		}
 
@@ -773,10 +773,11 @@ void compileClass(){
 	string t;
 	xmlout ="<identifier> " + cn + " </identifier>\n";
 	fprintf(vmf,"%s",xmlout.c_str());
-
 	advance();
 	char s = symbol();
 	if(s == '{'){
+		head = createST(cn);
+		curfunc = cn;
 		runno = 0;
 		xmlout ="<symbol>";
 		xmlout += s;
