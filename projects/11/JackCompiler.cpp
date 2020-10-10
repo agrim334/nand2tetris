@@ -13,7 +13,7 @@ void readcom(string ar){
 	advance();
 	compileClass();
 	fclose(jackf);
-//	dispTable();
+	dispTable();
 }
 
 string to_ster(char* ar){

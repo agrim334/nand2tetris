@@ -16,6 +16,59 @@ struct node{
 struct node* head;
 struct node* tail;
 
+string kindof(string classST,string STname,string vname){
+	struct node* temp = STExists(STname);
+	string kind = "";
+
+	if(!temp){
+		temp = STExists(classST);
+		if(!temp)
+			return kind;
+	}
+	for(auto i = (temp->sym_tab).begin(); i!= (temp->sym_tab).end();i++){
+		if(i->first == vname){
+			struct info t2 = i -> second;
+			return t2.vkind;
+		}
+	}
+	return kind;		
+}
+string typeof(string classST,string STname,string vname){
+	struct node* temp = STExists(STname);
+	string type = "";
+
+	if(!temp){
+		temp = STExists(classST);
+		if(!temp)
+			return type;
+	}
+	for(auto i = (temp->sym_tab).begin(); i!= (temp->sym_tab).end();i++){
+		if(i->first == vname){
+			struct info t2 = i -> second;
+			return t2.vtype;
+		}
+	}
+	return type;
+
+}
+int indexof(string classST,string STname,string vname){
+	struct node* temp = STExists(STname);
+
+	if(!temp){
+		temp = STExists(classST);
+		if(!temp)
+			return -1;
+	}
+
+	for(auto i = (temp->sym_tab).begin(); i!= (temp->sym_tab).end();i++){
+		if(i->first == vname){
+			struct info t2 = i -> second;
+			return t2.runno;
+		}
+	}
+	return -1;
+
+}
 void dispTable(){
 	struct node* temp;
 	temp = head;

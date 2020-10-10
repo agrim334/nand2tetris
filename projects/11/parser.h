@@ -1,6 +1,4 @@
-#include"lexer.h"
-#include"SymbolTable.h"
-#include <algorithm>
+#include"VMWriter.h"
 //expression
 void compileTerm();
 void compileSubroutine();
@@ -27,7 +25,7 @@ string pr;
 int f = 0;
 int runno = 0;
 string curfunc;
-
+string cname;
 char op(){
 	char oper = symbol();
 	char opsym[] = {'+','-','*','/','&','|','>','<','='};
@@ -667,7 +665,7 @@ void compileSubroutineHead(){
 
 	xmlout = "<keyword> " + curtok + " </keyword>\n";
 	fprintf(vmf,"%s",xmlout.c_str());
-
+	string ftype = curtok;
 	advance();
 	string t;
 	if(curtok == "void")
@@ -686,11 +684,20 @@ void compileSubroutineHead(){
 	string sbn = identifier();
 	xmlout ="<identifier> "  + sbn + " </identifier>\n";	
 	curfunc = sbn;
+
+
 	fprintf(vmf,"%s",xmlout.c_str());
 	advance();
 	char s = symbol();
 	if(s == '('){
 		runno = 0;
+		if(ftype == "method"){
+			pr = "argument";
+			if(!contains(curfunc,"this",cname,pr,runno)){
+				addEntry(curfunc,"this",cname,pr,runno);
+				runno++;
+			}
+		}
 		compileParameterlist();
 		runno = 0;
 		compileSubroutineBody();
@@ -771,6 +778,7 @@ void compileClass(){
 	advance();
 	string cn = identifier();
 	string t;
+	cname = cn;
 	xmlout ="<identifier> " + cn + " </identifier>\n";
 	fprintf(vmf,"%s",xmlout.c_str());
 	advance();
