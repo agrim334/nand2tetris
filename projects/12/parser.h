@@ -284,7 +284,7 @@ void compileElseStatement(){
 	s = symbol();
 	xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
 	fprintf(vmf,"%s",xmlout.c_str());
-	runno = 0;
+//	runno = 0;
 	compileStatements();
 	s = symbol();
 	if(s == '}'){
@@ -315,7 +315,7 @@ void compileIfStatement(){
 		advance();
 		s = symbol();
 		if(s == '{'){
-			runno = 0;
+//			runno = 0;
 			xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
 			fprintf(vmf,"%s",xmlout.c_str());
 			compileStatements();
@@ -348,7 +348,7 @@ void compileWhileStatement(){
 		advance();
 		s = symbol();
 		if(s == '{'){
-			runno = 0;
+//			runno = 0;
 			xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
 			fprintf(vmf,"%s",xmlout.c_str());
 			compileStatements();
@@ -495,6 +495,7 @@ void compileVarDec(){
 		pr = "local";
 		runno = 0;
 	}
+	printf("loc var dec %s %s %d\n",pr.c_str(),curline,runno);
 
 	string xmlout = "";
 	xmlout ="<varDec>\n";
@@ -562,7 +563,7 @@ void compileSubroutineBody(){
 	fprintf(vmf,"%s",xmlout.c_str());
 	advance();
 	while(curtok == "var"){
-		runno = 0;
+//		runno = 0;
 		compileVarDec();
 		advance();
 	}
