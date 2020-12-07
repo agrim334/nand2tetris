@@ -139,7 +139,21 @@ void compileTerm_(){
 		}
 	}
 	else{
-		xmlout ="<identifier> "  + curtok + " </identifier>\n";
+		string vtype,vkind,runno;
+		vtype = typeoff(cname,curfunc,curtok);
+		vkind = kindof(cname,curfunc,curtok);
+		runno = to_string(indexof(cname,curfunc,curtok));
+		if(vtype == "int" || vtype == "boolean" || vtype == "char"){
+			if(vkind == "static" || vkind == "field")
+				xmlout = "push static "+ runno +"\n";
+			else if(vkind == "argument")
+				xmlout = "push argument "+ runno +"\n";
+			else if(vkind == "local")
+				xmlout = "push local "+ runno +"\n";
+		}
+		else{
+				xmlout = "";
+		}
 		fprintf(vmf,"%s",xmlout.c_str());
 	}
 }
@@ -157,19 +171,27 @@ void compileTerm(){
 
 	if(t == "INT_CONST"){
 		y = intconstant();
-		xmlout ="<integerConstant> ";
-		xmlout += to_string(y);
-		xmlout += "  </integerConstant>\n";
+		//xmlout ="<integerConstant> ";
+		//xmlout += to_string(y);
+		//xmlout += "  </integerConstant>\n";
+		xmlout = "push constant " + to_string(y); 
 		fprintf(vmf,"%s",xmlout.c_str());
 	}
 	else if( t == "STRING_CONST"){
 		x = stringconstant();
-		xmlout ="<stringConstant>  " + x + " </stringConstant>\n";
+
 		fprintf(vmf,"%s",xmlout.c_str());
 	}
 	else if( t == "KEYWORD"){
 		x = kwconst();
-		xmlout ="<keyword>  " + x + " </keyword>\n";
+		xmlout = "push constant ";
+		if(x == "true")
+			xmlout += "1\nneg\n";
+		else if(x == "false" || x == "false")
+			xmlout += "0\n";
+		else
+			xmlout;
+
 		fprintf(vmf,"%s",xmlout.c_str());
 	}
 	else if( t == "IDENTIFIER")
@@ -178,24 +200,30 @@ void compileTerm(){
 	else if( t == "SYMBOL"){
 		s = symbol();
 		if(s == '('){
-			xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
-			fprintf(vmf,"%s",xmlout.c_str());
+//			xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
+//			fprintf(vmf,"%s",xmlout.c_str());
 			compileExp();
 			t = tokenType();
 			if (t == "SYMBOL"){
 				s = symbol();
 				if( s == ')'){
-					xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
-					fprintf(vmf,"%s",xmlout.c_str());
+					;
+//					xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
+//					fprintf(vmf,"%s",xmlout.c_str());
 				}
 			}
 		}
 		else{
 			s = unaryop();
-			if(s){
-				xmlout ="<symbol> "; xmlout += s; xmlout += " </symbol>\n";
-				fprintf(vmf,"%s",xmlout.c_str());
+			if(s == '-'){
 				compileTerm();
+				xmlout = "neg\n ";
+				fprintf(vmf,"%s",xmlout.c_str());
+			}
+			else if(s == '~'){
+				compileTerm();
+				xmlout = "not\n ";
+				fprintf(vmf,"%s",xmlout.c_str());
 			}
 		}
 
