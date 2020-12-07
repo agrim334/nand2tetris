@@ -26,6 +26,8 @@ int f = 0;
 int runno = 0;
 string curfunc;
 string cname;
+int lno = 0;
+
 char op(){
 	char oper = symbol();
 	char opsym[] = {'+','-','*','/','&','|','>','<','='};
@@ -144,12 +146,9 @@ void compileTerm_(){
 		vkind = kindof(cname,curfunc,curtok);
 		runno = to_string(indexof(cname,curfunc,curtok));
 		if(vtype == "int" || vtype == "boolean" || vtype == "char"){
-			if(vkind == "static" || vkind == "field")
-				xmlout = "push static "+ runno +"\n";
-			else if(vkind == "argument")
-				xmlout = "push argument "+ runno +"\n";
-			else if(vkind == "local")
-				xmlout = "push local "+ runno +"\n";
+			if(vkind == "field")
+				vkind = "static";
+			writePush(vkind,runno);
 		}
 		else{
 				xmlout = "";
@@ -174,8 +173,7 @@ void compileTerm(){
 		//xmlout ="<integerConstant> ";
 		//xmlout += to_string(y);
 		//xmlout += "  </integerConstant>\n";
-		xmlout = "push constant " + to_string(y); 
-		fprintf(vmf,"%s",xmlout.c_str());
+		writePush("constant",y);
 	}
 	else if( t == "STRING_CONST"){
 		x = stringconstant();
@@ -186,13 +184,11 @@ void compileTerm(){
 		x = kwconst();
 		xmlout = "push constant ";
 		if(x == "true")
-			xmlout += "1\nneg\n";
+			writePush("constant",65535);
 		else if(x == "false" || x == "false")
-			xmlout += "0\n";
+			writePush("constant",0);
 		else
-			xmlout;
-
-		fprintf(vmf,"%s",xmlout.c_str());
+			writePush("this",0);
 	}
 	else if( t == "IDENTIFIER")
 		compileTerm_();
@@ -215,15 +211,9 @@ void compileTerm(){
 		}
 		else{
 			s = unaryop();
-			if(s == '-'){
+			if(s == '-' || s == '~'){
 				compileTerm();
-				xmlout = "neg\n ";
-				fprintf(vmf,"%s",xmlout.c_str());
-			}
-			else if(s == '~'){
-				compileTerm();
-				xmlout = "not\n ";
-				fprintf(vmf,"%s",xmlout.c_str());
+				writeArithLog(s,1);
 			}
 		}
 

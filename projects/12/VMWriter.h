@@ -12,7 +12,45 @@ void writePop(string seg,int ind){
 	fprintf(vmf,"%s",xmlout.c_str());
 }
 
-void writeArith(string com){
+void writeArithLog(char op,int un){
+	if(un){
+		if(op == '-')
+			xmlout = "neg\n ";
+		else if(op == '~')
+			xmlout = "not\n ";
+	}
+	else{
+		switch(op){
+			case '+':
+				xmlout = "add\n";
+			break;
+			case '-':
+				xmlout = "sub\n";
+			break;
+			case '*':
+				xmlout = "call Math.multiply\n";
+			break;
+			case '/':
+				xmlout = "call Math.divide\n";
+			break;
+			case '<':
+				xmlout = "lt\n";
+			break;
+			case '>':
+				xmlout = "gt\n";
+			break;
+			case '=':
+				xmlout = "eq\n";
+			break;
+			case '&':
+				xmlout = "and\n";
+			break;
+			case '|':
+				xmlout = "or\n";
+			break;
+		}
+	}
+
 	fprintf(vmf,"%s\n",com.c_str());
 }
 
